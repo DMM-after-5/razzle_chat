@@ -6,7 +6,6 @@ class User < ApplicationRecord
   validates :name, presence: true, length: { maximum: 80 }
   validates :nickname, presence: true, length: { maximum: 20 }
   validates :phone_number, presence: true
-  validates :is_deleted, presence: true
 
   has_many :messages, dependent: :destroy
   has_many :entries, dependent: :destroy
