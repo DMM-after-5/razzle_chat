@@ -24,18 +24,18 @@
     %div.col.col-2
       %ul.nav.nav-tabs(id="myTab" role="tablist")
         %li.nav-item
-          %a.nav-link.active(id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true")
+          %a.nav-link.active(id="rooms-tab" data-toggle="tab" href="#rooms" role="tab" aria-controls="rooms" aria-selected="true")
             ルーム
         %li.nav-item
-          %a.nav-link(id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false")
+          %a.nav-link(id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false")
             フレンド
       %div.tab-content(id="myTabContent")
         // 左のサイドバー
-        %div.tab-pane.fade.show.active(id="home" role="tabpanel" aria-labelledby="home-tab")
+        %div.tab-pane.fade.show.active(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
           // ルーム一覧
           - @rooms.each do |room|
             = room.name
-        %div.tab-pane.fade(id="profile" role="tabpanel" aria-labelledby="profile-tab")
+        %div.tab-pane.fade(id="friends" role="tabpanel" aria-labelledby="friends-tab")
           // フレンド一覧
           - @users.each do |user|
             = user.name

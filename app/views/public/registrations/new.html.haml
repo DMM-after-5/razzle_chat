@@ -1,0 +1,30 @@
+%h2 Sign up
+= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f|
+  = render "public/shared/error_messages", resource: resource
+  .field
+    = f.label :email
+    %br/
+    = f.email_field :email, autofocus: true, autocomplete: "email"
+  .field
+    = f.label :password
+    - if @minimum_password_length
+      %em
+        (#{@minimum_password_length} characters minimum)
+    %br/
+    = f.password_field :password, autocomplete: "new-password"
+  .field
+    = f.label :password_confirmation
+    %br/
+    = f.password_field :password_confirmation, autocomplete: "new-password"
+  .field
+    名前
+    \#{f.text_field :name}
+  .field
+    ニックネーム
+    \#{f.text_field :nickname}
+  .field
+    電話番号
+    \#{f.text_field :phone_number}
+  .actions
+    = f.submit "Sign up"
+= render "public/shared/links"
