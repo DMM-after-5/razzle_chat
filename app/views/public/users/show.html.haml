@@ -1,4 +1,3 @@
-// 隠れて見えないのでmt-5してます
 %div.container-fluid
   %div.row.text-center(style="height: 15vh;")
     // マイページ上部
@@ -8,10 +7,10 @@
       ルーム名
     %div.col.col-2.border.bg-secondary
       // ルーム作成ボタン
-      // = link_to 'ルーム作成', rooms_path, method: :post, class: "btn btn-info"
+      // 仮のルーム作成ボタンです
       = form_with model: Room.new, url: rooms_path do |f|
         = f.hidden_field :name, :value => "name"
-        = f.submit 'ルーム作成'
+        = f.submit 'ルーム作成(仮)', class: "btn btn-info"
 
       // userボタン
 
@@ -21,8 +20,8 @@
       - if user_signed_in?
         = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "btn btn-info"
   %div.row.bg-secondary(style="height: 85vh;")
-    // 下の
-    %div.col.col-2.borde
+    // マイページ下部
+    %div.col.col-2
       %ul.nav.nav-tabs(id="myTab" role="tablist")
         %li.nav-item
           %a.nav-link.active(id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true")
