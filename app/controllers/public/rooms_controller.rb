@@ -14,7 +14,7 @@ class Public::RoomsController < ApplicationController
     end
   end
 
-  def destroy
+  def update
   end
 
   private
