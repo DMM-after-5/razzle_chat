@@ -1,11 +1,11 @@
-%div.container-fluid
-  %div.row.text-center(style="height: 15vh;")
+.container-fluid
+  .row.text-center(style="height: 15vh;")
     // マイページ上部
-    %div.col.col-2.border.bg-secondary
+    .col.col-2.border.bg-secondary
       LOGO
-    %div.col.border.bg-secondary
+    .col.border.bg-secondary
       ルーム名
-    %div.col.col-2.border.bg-secondary
+    .col.col-2.border.bg-secondary
       // ルーム作成ボタン
       // 仮のルーム作成ボタンです
       = form_with model: Room.new, url: rooms_path do |f|
@@ -19,9 +19,9 @@
       // ログアウトボタン
       - if user_signed_in?
         = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "btn btn-info"
-  %div.row.bg-secondary(style="height: 85vh;")
+  .row.bg-secondary(style="height: 85vh;")
     // マイページ下部
-    %div.col.col-2
+    .col.col-2
       %ul.nav.nav-tabs(id="myTab" role="tablist")
         %li.nav-item
           %a.nav-link.active(id="rooms-tab" data-toggle="tab" href="#rooms" role="tab" aria-controls="rooms" aria-selected="true")
@@ -29,18 +29,22 @@
         %li.nav-item
           %a.nav-link(id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false")
             フレンド
-      %div.tab-content(id="myTabContent")
+      .tab-content(id="myTabContent")
         // 左のサイドバー
-        %div.tab-pane.fade.show.active(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
+        .tab-pane.fade.show.active(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
           // ルーム一覧
           - @rooms.each do |room|
             = room.name
-        %div.tab-pane.fade(id="friends" role="tabpanel" aria-labelledby="friends-tab")
+            - entry = room.entries.find_by(user_id: current_user)
+            - if entry.entry_status == false
+              = link_to '参加する', entry_path(entry.id), method: :patch
+            %br
+        .tab-pane.fade.list-group(id="friends" role="tabpanel" aria-labelledby="friends-tab")
           // フレンド一覧
           - @users.each do |user|
-            = user.name
+            = link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: 1 } }), method: :post, class: "list-group-item list-group-item-action"
 
-    %div.col.border
+    .col.border
       // チャット画面など
       チャット画面
 

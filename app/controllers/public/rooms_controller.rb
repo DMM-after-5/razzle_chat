@@ -7,6 +7,7 @@ class Public::RoomsController < ApplicationController
       entry = Entry.new
       entry.user_id = current_user.id
       entry.room_id = room.id
+      entry.entry_status = true
       entry.save
       redirect_to root_path
     else
