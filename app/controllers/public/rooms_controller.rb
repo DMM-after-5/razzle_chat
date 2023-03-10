@@ -28,5 +28,4 @@ class Public::RoomsController < ApplicationController
   def room_params
     params.require(:room).permit(:owner_id, :members_status, :name, :introduction, :is_deleted)
   end
-
 end
