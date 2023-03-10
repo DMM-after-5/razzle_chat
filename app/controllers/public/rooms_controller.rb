@@ -15,6 +15,12 @@ class Public::RoomsController < ApplicationController
   end
 
   def update
+    room = Room.find(params[:id])
+    if room.update(room_params)
+      redirect_to root_path
+    else
+      render root_path
+    end
   end
 
   private
