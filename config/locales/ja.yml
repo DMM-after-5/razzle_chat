@@ -27,6 +27,24 @@ ja:
         updated_at: 更新日
     models:
       user: ユーザー
+    errors:
+      models:
+        user:
+          attributes:
+            name:
+              blank: が入力されていません
+              too_long: は80文字以下にしてください
+            nickname:
+              blank: が入力されていません
+              too_long: は20文字以下にしてください
+            email:
+              blank: が入力されていません
+              taken: は既に使用されています
+            phone_number:
+              blank: が入力されていません
+            password:
+              blank: が入力されていません
+              too_short: は6文字以上に設定してください
   devise:
     confirmations:
       confirmed: メールアドレスが確認できました。
