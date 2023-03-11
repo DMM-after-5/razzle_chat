@@ -1,10 +1,7 @@
 class Public::MessagesController < ApplicationController
 
   def create
-    room = Room.find(params[:room_id])
-    @message = Message.new(message_params)
-    @message.user_id = current_user.id
-    @message.room_id = room.id
+    @message = current_user.messages.new(message_params)
     @message.save
     redirect_to request.referer
   end
@@ -20,7 +17,7 @@ class Public::MessagesController < ApplicationController
   private
 
   def message_params
-    params.require(:message).permit(:message)
+    params.require(:message).permit(:message,:room_id,:user_id)
   end
 
 end
