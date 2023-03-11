@@ -21,8 +21,12 @@ Rails.application.routes.draw do
 
   # 以下各種機能を入れていく
   scope module: :public do
-    resource :users, only: [:update]
+    resource :users, only: [:update] do
+      resource :relationships, only: [:create, :destroy]
+    end
     resources :rooms, only: [:create, :update]
     resources :entries, only: [:create, :update, :destroy]
+    resources :messages, only: [:create, :destroy]
+
   end
 end
