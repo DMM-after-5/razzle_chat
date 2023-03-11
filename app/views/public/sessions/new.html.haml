@@ -1,0 +1,31 @@
+// %div はhaml記法で省略しています
+// vh-100 で 画面の高さぴったり（style="height: 100vh;"）にページの高さを合わせることができます
+.container-fluid.vh-100
+  .row.h-25
+    .col.text-center.my-auto
+      // サイトタイトル
+      %h1 Razzle Chat
+  .row.h-75
+    .col.col-5.text-center.mx-auto
+      %h2
+        ログイン
+        <i class="fas fa-sign-in-alt"></i>
+      // ログインフォーム
+      // idとclassに指定している 'new_user' は form_for の時にデベロッパーツールで現れていたものを明示的に入れています
+      // was-validated：バリデーションに引っかかっている時に、フォーム入力欄の枠の色で分かりやすく表示してくれるようになります
+      = form_with model: resource, url: user_session_path, id: 'new_user', class: 'new_user was-validated', local: true do |f|
+        .field.mt-3
+          = f.email_field :email, autofocus: true, class: "form-control", id: "validationTextarea", placeholder: "メールアドレス", required: true
+          .invalid-feedback
+            メールアドレスを入力してください。
+        .field.mt-3
+          = f.password_field :password, class: "form-control", id: "validationTextarea", placeholder: "パスワード", required: true
+          .invalid-feedback
+            パスワードを入力してください。
+        - if devise_mapping.rememberable?
+          .field.mt-3
+            = f.check_box :remember_me
+            = f.label :remember_me
+        .actions.mt-3
+          = f.submit "ログイン", class: "btn btn-primary"
+      = render "public/shared/links"
