@@ -28,7 +28,7 @@
             ルーム
         %li.nav-item
           %a.nav-link(id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false")
-            フレンド
+            フレンド(仮)
       .tab-content(id="myTabContent")
         // 左のサイドバー
         .tab-pane.fade.show.active(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
@@ -41,10 +41,35 @@
             %br
         .tab-pane.fade.list-group(id="friends" role="tabpanel" aria-labelledby="friends-tab")
           // フレンド一覧
+          // 下記暫定的な書き方
           - @users.each do |user|
             = link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: 1 } }), method: :post, class: "list-group-item list-group-item-action"
+            - if current_user.following?(user)
+              = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
+            - else
+              = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
 
     .col.border
       // チャット画面など
-      チャット画面
+      // 下記暫定的な書き方
+      チャット画面(仮)
+      - room = Room.find(1)
+      .container
+        .row
+          - room.users.each do |user|
+            - if user.id == room.owner_id
+              .col
+                = user.name
+                - user.messages.each do |message|
+                  = message.message
+            - else
+              .col
+                = user.name
+                - user.messages.each do |message|
+                  = message.message
+        .row
+          = form_with model: Message.new, url: messages_path, method: :post do |f|
+            = f.text_area :message
+            = f.hidden_field :room_id, :value => 1
+            = f.submit "送信"
 
