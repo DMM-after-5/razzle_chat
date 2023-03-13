@@ -1,0 +1,6 @@
+- users.each do |user|
+  = link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: 1 } }), method: :post, class: "list-group-item list-group-item-action"
+  - if current_user.following?(user)
+    = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
+  - else
+    = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
