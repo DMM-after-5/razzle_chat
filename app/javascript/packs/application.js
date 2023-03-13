@@ -13,6 +13,52 @@ import "bootstrap";
 import "../stylesheets/application"
 import '@fortawesome/fontawesome-free/js/all'
 
+import Cookies from 'js-cookie';
+
 Rails.start()
 Turbolinks.start()
 ActiveStorage.start()
+
+window.Cookies = require("js-cookie")
+
+// $(document).on('turbolinks:load', function() {
+// $(document).ready(function() {
+//   console.log("test");
+//   $(function() {
+    
+//     $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+      
+//       //console.log(e.target.href);
+//       var tabName = e.target.href;
+//       var items = tabName.split("#");
+//       Cookies.set("openTag",items[1], { expires: 1/24 });
+//     });
+
+//     if(Cookies.get("openTag")){
+//       $('a[data-toggle="tab"]').parent().removeClass('active');
+//       $('a[href="#' + Cookies.get("openTag") +'"]').click();
+//     }
+//   });
+//});
+
+// Cookies.set('openTag', "friends");
+
+$(document).on('turbolinks:load', function() {
+  
+  
+  $('a[data-toggle="tab"]').on('click', function (e) {
+    var tabName = e.target.href;
+    var items = tabName.split("#");
+    Cookies.set("openTag",items[1], { expires: 1/24 });
+  });
+
+
+  if(Cookies.get("openTag")){
+    console.log(Cookies.get("openTag"));
+    $('a[data-toggle="tab"]').parent().removeClass('active');
+    
+    // クリック処理のみ未実装
+    $('#friends').trigger("click");
+    //$('a[href="#' + Cookies.get("openTag") +'"]').click();
+  }
+});
