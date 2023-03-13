@@ -50,15 +50,21 @@ $(document).on('turbolinks:load', function() {
     var tabName = e.target.href;
     var items = tabName.split("#");
     Cookies.set("openTag",items[1], { expires: 1/24 });
+    console.log(Cookies.get("openTag"));
   });
 
 
-  if(Cookies.get("openTag")){
-    console.log(Cookies.get("openTag"));
+  if(Cookies.get("openTag") == "friends") {
+    console.log(Cookies.get("openTag if 開始"));
     $('a[data-toggle="tab"]').parent().removeClass('active');
     
+    // 下記コードでactive取り付け可能
+    // ただし、表示内容がroomのものになっている
+    //$('a[href="#' + Cookies.get("openTag") +'"]').addClass('active');
+    
     // クリック処理のみ未実装
-    $('#friends').trigger("click");
-    //$('a[href="#' + Cookies.get("openTag") +'"]').click();
+    //$('#friends').trigger("click");
+    $('a[href="#' + Cookies.get("openTag") +'"]').click();
+    // $('a[href="#' + Cookies.get("openTag") +'"]').click();
   }
 });
