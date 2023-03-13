@@ -43,20 +43,54 @@ window.Cookies = require("js-cookie")
 
 // Cookies.set('openTag', "friends");
 
+let test1 = Cookies.get("openTag");
+
 $(document).on('turbolinks:load', function() {
   
   
   $('a[data-toggle="tab"]').on('click', function (e) {
     var tabName = e.target.href;
     var items = tabName.split("#");
+    
     Cookies.set("openTag",items[1], { expires: 1/24 });
+    
+    // Cookiesの"openTag"にfriendが入っているが、roomが入らない
     console.log(Cookies.get("openTag"));
+    test1 = Cookies.get("openTag")
   });
 
+  // if(Cookies.get("openTag")) {では if文が正常に動作していない？
+  //  console.log("openTag if 開始");が作動しなかった。if(test1.present) { なら問題なく稼働する。尚、クリックイベントは動作しない。
+  //----------------------------------------------------------
+  //if(Cookies.get("openTag")) {
+  //if(test1.present) {
+  //  
+  //} else {
+  //  console.log("openTag if 開始");
+  //  console.log(test1);
+  //  $('a[data-toggle="tab"]').parent().removeClass('active');
+  //  
+  //  // 下記コードでactive取り付け可能
+  //  // ただし、表示内容がroomのものになっている
+  //  //$('a[href="#' + Cookies.get("openTag") +'"]').addClass('active');
+  //  
+  //  // クリック処理のみ未実装
+  //  //$('#friends').trigger("click");
+  //  $('a[href="#' + Cookies.get("openTag") +'"]').click();
+  //  // $('a[href="#' + Cookies.get("openTag") +'"]').click();
+  //};
+  
+  
+  // 新規記述
+  if(test1.to_s == "friends") {
+    
+  } else {
+    //console.log("openTag if 開始");
+    //console.log(test1);
+    $('#rooms-tab').removeClass('active');
+    $('#friends-tab').click();
+    
 
-  if(Cookies.get("openTag") == "friends") {
-    console.log(Cookies.get("openTag if 開始"));
-    $('a[data-toggle="tab"]').parent().removeClass('active');
     
     // 下記コードでactive取り付け可能
     // ただし、表示内容がroomのものになっている
@@ -64,7 +98,7 @@ $(document).on('turbolinks:load', function() {
     
     // クリック処理のみ未実装
     //$('#friends').trigger("click");
-    $('a[href="#' + Cookies.get("openTag") +'"]').click();
+    //$('a[href="#' + Cookies.get("openTag") +'"]').click();
     // $('a[href="#' + Cookies.get("openTag") +'"]').click();
-  }
+  };
 });
