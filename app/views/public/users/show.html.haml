@@ -34,7 +34,8 @@
         .tab-pane.fade.show.active(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
           // ルーム一覧
           - @rooms.each do |room|
-            = link_to room.name, root_path(room_id: room.id)
+            %p{"data-tablinks" => "off"} 
+              = link_to room.name, root_path(room_id: room.id)
             - entry = room.entries.find_by(user_id: current_user)
             - if entry.entry_status == false
               = link_to '参加する', entry_path(entry.id), method: :patch
@@ -82,3 +83,34 @@
               = f.hidden_field :room_id, :value => 1
               = f.submit "送信"
 
+
+:javascript
+  window.onload = () => {
+    let rooms = document.getElementById("rooms-tab");
+    let friends = document.getElementById("friends-tab");
+    
+    let changeActive = 1;
+    let myActive = localStorage.getItem("changeActive");
+    
+    // ページ読み込み時に発火
+    // changeActiveの内容で、タブが切り替わる
+    rooms.addEventListener("click", () => {
+      changeActive = 1;
+      localStorage.setItem("changeActive", changeActive);
+      rooms.click();
+    });
+    
+    friends.addEventListener("click", () => {
+      changeActive = 2;
+      localStorage.setItem("changeActive", changeActive);
+      friends.click();
+    });
+    
+    if (myActive == 1) {
+      rooms.click();
+    } else if (myActive == 2){
+      friends.click();
+    } else {
+  
+    };
+  };
