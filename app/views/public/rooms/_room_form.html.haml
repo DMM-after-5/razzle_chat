@@ -1,0 +1,12 @@
+= form_with model: room do |f|
+  .form-group
+    = f.label :name, "ルーム名", class: "col-form-label"
+    = f.text_field :name, class: "form-control"
+  .form-group
+    = f.label :member, "参加人数", class: "col-form-label"
+    = f.select :members_status, (2..15).to_a, {}, class: "form-control col-2"
+  .form-group
+    = f.label :introduction, "ルーム説明", class: "col-form-label"
+    = f.text_area :introduction, class: "form-control"
+  .modal-footer
+    = f.submit 'ルーム作成(仮)', class: "btn btn-info"

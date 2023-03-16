@@ -3,7 +3,7 @@
     #modal.d-none
       // ルーム作成ボタン
       // 仮のルーム作成ボタンです
-      = render "public/rooms/create_room"
+
   .row.text-center(style="height: 15vh;")
     // マイページ上部
     .col.col-2.border.bg-secondary
@@ -11,10 +11,29 @@
     .col.border.bg-secondary
       ルーム名
     .col.col-2.border.bg-secondary
-      .room_create_btn.btn.btn-info
-        ルーム作成
 
       // userボタン
+
+      // ルーム作成ボタン
+      %button.btn.btn-primary{"data-target" => "#exampleModalLong", "data-toggle" => "modal", type: "button" }
+        ルーム作成
+
+      // ルーム編集ボタン
+      - if @room.present?
+        %button.btn.btn-primary{"data-target" => "#exampleModalLong", "data-toggle" => "modal", type: "button"}
+          ルーム編集
+
+      // モーダルで表示する記述です
+      #exampleModalLong.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "exampleModalLongTitle", role: "dialog", tabindex: "-1"}
+        .modal-dialog{role: "document"}
+          .modal-content
+            .modal-header
+              %h5#exampleModalLongTitle.modal-title ルーム作成
+              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                %span{"aria-hidden" => "true"} ×
+            .modal-body.text-left(style="word-wrap: break-word;")
+              // モーダルの中身
+              = render "public/rooms/room_form", room: Room.new
 
       // configボタン
 
@@ -35,6 +54,14 @@
         // 左のサイドバー
         .tab-pane.fade.show.active(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
           // ルーム一覧
+
+
+          // ルームIDをJavascriptに渡すテスト中
+          - if @room.present?
+            .test_id2.d-none
+              = @room.id
+
+
           - @rooms.each do |room|
             %p{"data-tablinks" => "off"}
               = link_to room.name, root_path(room_id: room.id), data: { 'turbolinks': false }
@@ -115,9 +142,16 @@
     } else {
 
     };
-    let room_create_btn = document.querySelectorAll(".room_create_btn")[0];
-    room_create_btn.addEventListener('click', () => {
-      document.getElementById("modal").classList.toggle("d-none");
-    });
+
+    // ルームIDを取得
+    let roomId = document.getElementsByClassName("test_id2")[0].innerHTML;
+    console.log(roomId);
   };
 
+// モーダル用
+:javascript
+  $(function() {
+    $('#exampleModalLong').on('shown.bs.modal', function (e) {
+      $('#myInput').focus();
+    })
+  });
