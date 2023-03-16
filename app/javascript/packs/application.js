@@ -13,7 +13,7 @@ import "bootstrap";
 import "../stylesheets/application"
 import '@fortawesome/fontawesome-free/js/all'
 
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 
 Rails.start()
 Turbolinks.start()
