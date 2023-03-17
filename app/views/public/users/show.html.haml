@@ -1,9 +1,4 @@
 .container-fluid
-  .test(style="position: absolute; height: 100vh; text-align: center; width: 100vw;")
-    #modal.d-none
-      // ルーム作成ボタン
-      // 仮のルーム作成ボタンです
-      = render "public/rooms/create_room"
   .row.text-center(style="height: 15vh;")
     // マイページ上部
     .col.col-2.border.bg-secondary
@@ -11,44 +6,76 @@
     .col.border.bg-secondary
       ルーム名
     .col.col-2.border.bg-secondary
-      .room_create_btn.btn.btn-info
-        ルーム作成
+      = "#{current_user.name} ログイン中"
+      = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "btn btn-info"
 
-      // userボタン
+  // ページ下部
+  .row(style="height: 85vh;")
 
-      // configボタン
+    // 左のサイドバー
+    .col.col-2.p-0
 
-      // ログアウトボタン
-      - if user_signed_in?
-        = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "btn btn-info"
-  .row.bg-secondary(style="height: 85vh;")
-    // マイページ下部
-    .col.col-2
+      // タブ
       %ul.nav.nav-tabs(id="myTab" role="tablist")
         %li.nav-item
           %a.nav-link.active(id="rooms-tab" data-toggle="tab" href="#rooms" role="tab" aria-controls="rooms" aria-selected="true")
             ルーム
         %li.nav-item
           %a.nav-link(id="friends-tab" data-toggle="tab" href="#friends" role="tab" aria-controls="friends" aria-selected="false")
-            フレンド(仮)
+            フレンド
+
+      // タブの内容
       .tab-content(id="myTabContent")
-        // 左のサイドバー
-        .tab-pane.fade.show.active(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
-          // ルーム一覧
+
+        // ルーム一覧
+        .tab-pane.fade.show.active.list-group(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
+
+          // ルームIDをJavascriptに渡すテスト中
+          - if @room.present?
+            .test_id2.d-none
+              = @room.id
+
+          // ルーム作成ボタン
+          .text-center
+            .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomNew", "data-toggle" => "modal", type: "button" }
+              ルームを作成する<i class="fas fa-plus"></i>
+
+          // モーダルでルーム作成フォームを表示する記述
+          #modalRoomNew.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomNewTitle", role: "dialog", tabindex: "-1"}
+            .modal-dialog{role: "document"}
+              .modal-content
+                .modal-header
+                  %h5#modalRoomNewTitle.modal-title ルーム作成<i class="fas fa-plus"></i>
+                  %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                    %span{"aria-hidden" => "true"} ×
+                .modal-body.text-left(style="word-wrap: break-word;")
+                  // モーダルの中身
+                  = render "public/rooms/room_form", room: Room.new, submit_text: "ルーム作成"
+
           - @rooms.each do |room|
-            %p{"data-tablinks" => "off"}
-              = link_to room.name, root_path(room_id: room.id), data: { 'turbolinks': false }
+            -# %p{"data-tablinks" => "off"}
+            - if room == @room
+              = link_to root_path, data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center active" do
+                = room.name
+                %span.badge.badge-secondary.badge-pill= room.messages.count
+            - else
+              = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center list-group-item-action" do
+                = room.name
+                %span.badge.badge-primary.badge-pill= room.messages.count
             - entry = room.entries.find_by(user_id: current_user)
             - if entry.entry_status == false
               = link_to '参加する', entry_path(entry.id), method: :patch
-            %br
+
+        // フレンド一覧
         .tab-pane.fade.list-group(id="friends" role="tabpanel" aria-labelledby="friends-tab")
-          // フレンド一覧
+
+          // フレンド検索フォーム
           = form_with url: root_path, method: :get do |f|
             = f.select :range, options_for_select( { '名前' => 'Name', 'ニックネーム' => 'Nickname', 'ID' => 'ID'  }, 'Name')
             = f.search_field :word
             = f.submit "検索", id: "user_list"
           = link_to "リセット", root_path, method: :get
+
           // ユーザー一覧の部分テンプレート呼び出し
           // #user_lists
           //   = render "user_list", users: @users
@@ -59,13 +86,29 @@
             - else
               = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
 
-    .col.border
-      // チャット画面など
-      // 下記暫定的な書き方
-      チャット画面(仮)
-      // - room = Room.find(1)
+    // メイン画面
+    .col
+      // ルーム選択時
       - if @room.present?
-        = @room.name
+        %h1
+          = @room.name
+
+          // ルーム編集ボタン
+          .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
+            ルームを編集する<i class="fas fa-edit"></i>
+
+        // モーダルでルーム編集フォームを表示する記述
+        #modalRoomEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEditTitle", role: "dialog", tabindex: "-1"}
+          .modal-dialog{role: "document"}
+            .modal-content
+              .modal-header
+                %h5#modalRoomEditTitle.modal-title ルーム編集<i class="fas fa-edit"></i>
+                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                  %span{"aria-hidden" => "true"} ×
+              .modal-body.text-left(style="word-wrap: break-word;")
+                // モーダルの中身
+                = render "public/rooms/room_form", room: @room, submit_text: "変更を保存"
+
         .container
           .row
             - @room.users.each do |user|
@@ -84,6 +127,8 @@
               = f.text_area :message
               = f.hidden_field :room_id, :value => 1
               = f.submit "送信"
+      - else
+        %h1 ルーム未選択です
 
 
 :javascript
@@ -115,9 +160,8 @@
     } else {
 
     };
-    let room_create_btn = document.querySelectorAll(".room_create_btn")[0];
-    room_create_btn.addEventListener('click', () => {
-      document.getElementById("modal").classList.toggle("d-none");
-    });
-  };
 
+    // ルームIDを取得
+    let roomId = document.getElementsByClassName("test_id2")[0].innerHTML;
+    console.log(roomId);
+  };

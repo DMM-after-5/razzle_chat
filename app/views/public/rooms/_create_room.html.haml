@@ -1,8 +1,0 @@
-= form_with model: Room.new, url: rooms_path do |f|
-  = f.label :name
-  = f.text_field :name
-  = f.label :member
-  = f.select :members_status, (2..15).to_a
-  = f.label :introduction
-  = f.text_field :introduction
-  = f.submit 'ルーム作成(仮)', class: "btn btn-info"
