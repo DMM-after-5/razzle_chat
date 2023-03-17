@@ -9,4 +9,5 @@
     = f.label :introduction, "ルーム説明", class: "col-form-label"
     = f.text_area :introduction, class: "form-control"
   .modal-footer
-    = f.submit 'ルーム作成(仮)', class: "btn btn-info"
+    // submitボタンの表示内容をrender時に指定できるようにしました
+    = f.submit submit_text, class: "btn btn-info"
