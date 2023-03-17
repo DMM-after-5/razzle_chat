@@ -1,13 +1,8 @@
 .container-fluid
-  .test(style="position: absolute; height: 100vh; text-align: center; width: 100vw;")
-    #modal.d-none
-      // ルーム作成ボタン
-      // 仮のルーム作成ボタンです
-
   .row.text-center(style="height: 15vh;")
     // マイページ上部
     .col.col-2.border.bg-secondary
-      %span.align-middle LOGO
+      LOGO
     .col.border.bg-secondary
       ルーム名
     .col.col-2.border.bg-secondary
@@ -170,11 +165,3 @@
     let roomId = document.getElementsByClassName("test_id2")[0].innerHTML;
     console.log(roomId);
   };
-
-// モーダルウィンドウ用
--# :javascript
--#   $(function() {
--#     $('#modalRoomNew').on('shown.bs.modal', function (e) {
--#       $('#myInput').focus();
--#     })
--#   });
