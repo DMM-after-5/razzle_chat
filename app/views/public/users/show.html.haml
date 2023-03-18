@@ -117,11 +117,12 @@
                   = user.name
                   - user.messages.each do |message|
                     = message.message
-              - else
+              - elsif user.id == @room.owner_id
                 .col
                   = user.name
                   - user.messages.each do |message|
                     = message.message
+                  
           .row
             = form_with model: Message.new, url: messages_path, method: :post do |f|
               = f.text_area :message
