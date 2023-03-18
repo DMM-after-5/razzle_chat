@@ -80,7 +80,25 @@
           // #user_lists
           //   = render "user_list", users: @users
           - @users.each do |user|
-            = link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: 1 } }), method: :post, class: "list-group-item list-group-item-action"
+            = user.name
+            // モーダル
+            // .text-center
+            // .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEntry", "data-toggle" => "modal", type: "button" }
+            //   ルームへ招待<i class="fas fa-plus"></i>
+
+            // // モーダルでルーム作成フォームを表示する記述
+            // #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
+            //   .modal-dialog{role: "document"}
+            //     .modal-content
+            //       .modal-header
+            //         %h5#modalRoomEntryTitle.modal-title フレンド招待<i class="fas fa-plus"></i>
+            //         %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+            //           %span{"aria-hidden" => "true"} ×
+            //       .modal-body.text-left(style="word-wrap: break-word;")
+            //         = form_with model: Entry.new, url: entries_path, method: :post do |f|
+            //           = f.hidden_field :user_id, :value => user.id
+            //           = f.select 
+            // = link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
             - if current_user.following?(user)
               = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
             - else
@@ -110,22 +128,25 @@
                 = render "public/rooms/room_form", room: @room, submit_text: "変更を保存"
 
         .container
-          .row
-            - @room.users.each do |user|
-              - if user.id == @room.owner_id
+          - @room.messages.each do |message|
+            .row
+              - user = message.user
+              - if user == current_user
                 .col
+                .col.bg-info.ml-auto
                   = user.name
-                  - user.messages.each do |message|
-                    = message.message
+                  %br
+                  = message.message
               - else
-                .col
+                .col.bg-secondary.ml-auto
                   = user.name
-                  - user.messages.each do |message|
-                    = message.message
+                  %br
+                  = message.message
+                .col
           .row
             = form_with model: Message.new, url: messages_path, method: :post do |f|
               = f.text_area :message
-              = f.hidden_field :room_id, :value => 1
+              = f.hidden_field :room_id, :value => @room.id
               = f.submit "送信"
       - else
         %h1 ルーム未選択です
