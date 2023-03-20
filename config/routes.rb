@@ -27,6 +27,7 @@ Rails.application.routes.draw do
     resources :rooms, only: [:create, :update]
     resources :entries, only: [:create, :update, :destroy]
     resources :messages, only: [:create, :destroy]
+    post 'create_all' => 'entries#create_all'
 
   end
 end
