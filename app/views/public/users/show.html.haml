@@ -94,40 +94,39 @@
         %h1
           = @room.name
 
-
           // モーダル
           .text-center
             .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEntry", "data-toggle" => "modal", type: "button" }
               ルームへ招待<i class="fas fa-plus"></i>
-
-          // モーダルでルーム作成フォームを表示する記述
-          #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
-            .modal-dialog{role: "document"}
-              .modal-content
-                .modal-header
-                  %h5#modalRoomEntryTitle.modal-title
-                    フレンド招待<i class="fas fa-plus"></i>
-                    %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
-                      %span{"aria-hidden" => "true"} ×
-                  .modal-body.text-left(style="word-wrap: break-word;")
-                    = form_with model: Entry.new, url: create_all_path, method: :post do |f|
-                      - count = 0
-                      - @users.each do |user|
-                        - unless @room.users.any?{|room_user| room_user == user}
-                          = f.hidden_field :room_id, :value => @room.id
-                          = check_box_tag "user_ids[]", user.id
-                          = user.name
-                          - count += 1
-                      - if count == 0
-                        = "招待を送れるユーザーがいません"
-                      - else
-                        = submit_tag "送信"
 
           //= link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
 
           // ルーム編集ボタン
           .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
             ルームを編集する<i class="fas fa-edit"></i>
+
+        // モーダルでルーム作成フォームを表示する記述
+        #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
+          .modal-dialog{role: "document"}
+            .modal-content
+              .modal-header
+                %h5#modalRoomEntryTitle.modal-title
+                  フレンド招待<i class="fas fa-plus"></i>
+                  %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                    %span{"aria-hidden" => "true"} ×
+                .modal-body.text-left(style="word-wrap: break-word;")
+                  = form_with model: Entry.new, url: create_all_path, method: :post do |f|
+                    - count = 0
+                    - @users.each do |user|
+                      - unless @room.users.any?{|room_user| room_user == user}
+                        = f.hidden_field :room_id, :value => @room.id
+                        = check_box_tag "user_ids[]", user.id
+                        = user.name
+                        - count += 1
+                    - if count == 0
+                      = "招待を送れるユーザーがいません"
+                    - else
+                      = submit_tag "送信"
 
         // モーダルでルーム編集フォームを表示する記述
         #modalRoomEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEditTitle", role: "dialog", tabindex: "-1"}
@@ -142,27 +141,32 @@
                 = render "public/rooms/room_form", room: @room, submit_text: "変更を保存"
 
         .container
-          - @room.messages.each do |message|
+          // N+1問題対策のため@messagesにはユーザーデータも含めてあります
+          - @messages.each do |message|
             .row
               - user = message.user
               - if user == current_user
                 .col
-                .col.bg-info.ml-auto
-                  = user.name
-                  %br
-                  = message.message
+                .col.text-right
+                  %small
+                    = user.name
+                    = message.created_at.strftime('%Y/%m/%d %H:%M:%S')
+                  .bg-info.rounded.m-1.p-1
+                    = message.message
               - else
-                .col.bg-secondary.ml-auto
-                  = user.name
-                  %br
-                  = message.message
                 .col
-          .row
+                  %small
+                    = user.name
+                    = message.created_at.strftime('%Y/%m/%d %H:%M')
+                  .bg-secondary.rounded.m-1.p-1
+                    = message.message
+                .col
+          .row.bg-info.fixed-bottom
             - if Entry.find_by(room_id: @room.id, user_id: current_user.id).entry_status == true
               = form_with model: Message.new, url: messages_path, method: :post do |f|
-                = f.text_area :message
+                = f.text_area :message, class: "form-control"
                 = f.hidden_field :room_id, :value => @room.id
-                = f.submit "送信"
+                = f.submit "送信", class:"btn btn-success"
             - else
               = "参加してメッセージを投稿しましょう"
 
