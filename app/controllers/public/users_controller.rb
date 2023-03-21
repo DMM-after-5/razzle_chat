@@ -25,4 +25,20 @@ class Public::UsersController < ApplicationController
       @messages = @room.messages.includes(:user)
     end
   end
+  
+  def update
+    if current_user.update(user_params)
+      redirect_to root_path
+    else
+      @users = current_user.following_users
+      @rooms = current_user.rooms
+      flash.now[:alert] = "ユーザー情報の編集に失敗しました"
+      render :show
+    end
+  end
+  
+  private
+  def user_params
+    params.require(:user).permit(:name, :nickname, :phone_number, :search_id, :email)
+  end
 end
