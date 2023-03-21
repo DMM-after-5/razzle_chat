@@ -63,7 +63,7 @@
                 = room.name
                 %span.badge.badge-primary.badge-pill= room.messages.count
             - entry = room.entries.find_by(user_id: current_user)
-            - if entry.entry_status == false
+            - if room.entried?(current_user)
               = link_to '参加する', entry_path(entry.id), method: :patch
 
         // フレンド一覧
@@ -140,6 +140,7 @@
                 // モーダルの中身
                 = render "public/rooms/room_form", room: @room, submit_text: "変更を保存"
 
+        // チャット画面
         .container
           // N+1問題対策のため@messagesにはユーザーデータも含めてあります
           - @messages.each do |message|
@@ -150,7 +151,7 @@
                 .col.text-right
                   %small
                     = user.name
-                    = message.created_at.strftime('%Y/%m/%d %H:%M:%S')
+                    = message.created_at.strftime('%Y/%m/%d %H:%M')
                   .bg-info.rounded.m-1.p-1
                     = message.message
               - else
@@ -161,14 +162,20 @@
                   .bg-secondary.rounded.m-1.p-1
                     = message.message
                 .col
-          .row.bg-info.fixed-bottom
-            - if Entry.find_by(room_id: @room.id, user_id: current_user.id).entry_status == true
-              = form_with model: Message.new, url: messages_path, method: :post do |f|
-                = f.text_area :message, class: "form-control"
+
+          // 投稿フォーム
+          .row
+            - if @room.entried?(current_user)
+              // ルーム参加時
+              = form_with model: Message.new, url: messages_path, method: :post, class: "input-group" do |f|
+                = f.text_area :message, class: "form-control", rows: "3"
                 = f.hidden_field :room_id, :value => @room.id
-                = f.submit "送信", class:"btn btn-success"
+                .input-group-append
+                  = f.submit "送信", class:"btn btn-outline-secondary"
             - else
-              = "参加してメッセージを投稿しましょう"
+              // ルーム未参加時
+              .text-center
+                参加してメッセージを投稿しましょう
 
       - else
         %h1 ルーム未選択です
