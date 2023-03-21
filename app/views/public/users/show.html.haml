@@ -63,7 +63,7 @@
                 = room.name
                 %span.badge.badge-primary.badge-pill= room.messages.count
             - entry = room.entries.find_by(user_id: current_user)
-            - if entry.entry_status == false
+            - if room.entried?(current_user)
               = link_to '参加する', entry_path(entry.id), method: :patch
 
         // フレンド一覧
@@ -82,24 +82,8 @@
 
           - @users.each do |user|
             = user.name
-            // モーダル
-            // .text-center
-            // .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEntry", "data-toggle" => "modal", type: "button" }
-            //   ルームへ招待<i class="fas fa-plus"></i>
 
-            // // モーダルでルーム作成フォームを表示する記述
-            // #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
-            //   .modal-dialog{role: "document"}
-            //     .modal-content
-            //       .modal-header
-            //         %h5#modalRoomEntryTitle.modal-title フレンド招待<i class="fas fa-plus"></i>
-            //         %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
-            //           %span{"aria-hidden" => "true"} ×
-            //       .modal-body.text-left(style="word-wrap: break-word;")
-            //         = form_with model: Entry.new, url: entries_path, method: :post do |f|
-            //           = f.hidden_field :user_id, :value => user.id
-            //           = f.select
-            // = link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
+
             - if current_user.following?(user)
               = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
             - else
@@ -112,9 +96,39 @@
         %h1
           = @room.name
 
+          // モーダル
+          .text-center
+            .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEntry", "data-toggle" => "modal", type: "button" }
+              ルームへ招待<i class="fas fa-plus"></i>
+
+          //= link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
+
           // ルーム編集ボタン
           .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
             ルームを編集する<i class="fas fa-edit"></i>
+
+        // モーダルでルーム作成フォームを表示する記述
+        #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
+          .modal-dialog{role: "document"}
+            .modal-content
+              .modal-header
+                %h5#modalRoomEntryTitle.modal-title
+                  フレンド招待<i class="fas fa-plus"></i>
+                  %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                    %span{"aria-hidden" => "true"} ×
+                .modal-body.text-left(style="word-wrap: break-word;")
+                  = form_with model: Entry.new, url: create_all_path, method: :post do |f|
+                    - count = 0
+                    - @users.each do |user|
+                      - unless @room.users.any?{|room_user| room_user == user}
+                        = f.hidden_field :room_id, :value => @room.id
+                        = check_box_tag "user_ids[]", user.id
+                        = user.name
+                        - count += 1
+                    - if count == 0
+                      = "招待を送れるユーザーがいません"
+                    - else
+                      = submit_tag "送信"
 
         // モーダルでルーム編集フォームを表示する記述
         #modalRoomEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEditTitle", role: "dialog", tabindex: "-1"}
@@ -128,27 +142,43 @@
                 // モーダルの中身
                 = render "public/rooms/room_form", room: @room, submit_text: "変更を保存"
 
+        // チャット画面
         .container
-          - @room.messages.each do |message|
+          // N+1問題対策のため@messagesにはユーザーデータも含めてあります
+          - @messages.each do |message|
             .row
               - user = message.user
               - if user == current_user
                 .col
-                .col.bg-info.ml-auto
-                  = user.name
-                  %br
-                  = message.message
+                .col.text-right
+                  %small
+                    = user.name
+                    = message.created_at.strftime('%Y/%m/%d %H:%M')
+                  .bg-info.rounded.m-1.p-1
+                    = message.message
               - else
-                .col.bg-secondary.ml-auto
-                  = user.name
-                  %br
-                  = message.message
                 .col
+                  %small
+                    = user.name
+                    = message.created_at.strftime('%Y/%m/%d %H:%M')
+                  .bg-secondary.rounded.m-1.p-1
+                    = message.message
+                .col
+
+          // 投稿フォーム
           .row
-            = form_with model: Message.new, url: messages_path, method: :post do |f|
-              = f.text_area :message
-              = f.hidden_field :room_id, :value => @room.id
-              = f.submit "送信"
+            - if @room.entried?(current_user)
+              // ルーム参加時
+              = form_with model: Message.new, url: messages_path, method: :post, class: "input-group" do |f|
+                = f.text_area :message, class: "form-control", rows: "3"
+                = f.hidden_field :room_id, :value => @room.id
+                .input-group-append
+                  = f.submit "送信", class:"btn btn-outline-secondary"
+            - else
+              // ルーム未参加時
+              .text-center
+                参加してメッセージを投稿しましょう
+
       - else
         %h1 ルーム未選択です
 

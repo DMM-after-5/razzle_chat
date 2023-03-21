@@ -11,6 +11,20 @@ class Public::EntriesController < ApplicationController
     end
   end
 
+  def create_all
+    params[:user_ids].each do |user_id|
+      @entry = Entry.new(entry_params)
+      @entry.user_id = user_id
+      if @entry.save
+
+      else
+        #userのshowで必要な変数をすべて此処に記述
+        render root_path
+      end
+    end
+    redirect_to root_path
+  end
+
   def update
     entry = Entry.find(params[:id])
     if entry.update(entry_status: true)
