@@ -21,7 +21,8 @@ class Public::UsersController < ApplicationController
     # roomの切り替え処理
     if params[:room_id].present?
       @room = Room.find(params[:room_id])
+      # N+1問題を解消するためユーザー情報を含めたルームのメッセージを取得しています（users#showの@messages.eachの中でmessage.userと記述しているためbulletがエラーを出していました）
+      @messages = @room.messages.includes(:user)
     end
-
   end
 end
