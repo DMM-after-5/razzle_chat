@@ -79,6 +79,7 @@
           // ユーザー一覧の部分テンプレート呼び出し
           // #user_lists
           //   = render "user_list", users: @users
+
           - @users.each do |user|
             = user.name
             // モーダル
@@ -97,7 +98,7 @@
             //       .modal-body.text-left(style="word-wrap: break-word;")
             //         = form_with model: Entry.new, url: entries_path, method: :post do |f|
             //           = f.hidden_field :user_id, :value => user.id
-            //           = f.select 
+            //           = f.select
             // = link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
             - if current_user.following?(user)
               = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
