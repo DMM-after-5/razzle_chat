@@ -63,7 +63,7 @@
                 = room.name
                 %span.badge.badge-primary.badge-pill= room.messages.count
             - entry = room.entries.find_by(user_id: current_user)
-            - if room.entried?(current_user)
+            - if room.entried?(current_user) == false
               = link_to '参加する', entry_path(entry.id), method: :patch
 
         // フレンド一覧
