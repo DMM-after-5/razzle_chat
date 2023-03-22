@@ -9,7 +9,7 @@
       = "#{current_user.name} ログイン中"
       .btn.btn-sm.btn-success.my-1{"data-target" => "#modalUserEdit", "data-toggle" => "modal", type: "button" }
         ユーザーの編集
-        
+
       #modalUserEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalUserEditTitle", role: "dialog", tabindex: "-1"}
         .modal-dialog{role: "document"}
           .modal-content
@@ -41,7 +41,7 @@
                   = f.text_field :search_id, class: "form-control", placeholder: "検索用ID"
                 .mt-3
                   = f.submit "更新", class: "btn btn-success"
-                    
+
       = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "btn btn-info"
 
   // ページ下部
@@ -86,10 +86,10 @@
                 .modal-body.text-left(style="word-wrap: break-word;")
                   // モーダルの中身
                   = render "public/rooms/room_form", room: Room.new, submit_text: "ルーム作成"
-                  
-          
-                    
-                    
+
+
+
+
           - @rooms.each do |room|
             -# %p{"data-tablinks" => "off"}
             - if room == @room
@@ -117,12 +117,21 @@
           // ユーザー一覧の部分テンプレート呼び出し
           // #user_lists
           //   = render "user_list", users: @users
+
           - @users.each do |user|
             = user.name
+
 
             - if current_user.following?(user)
               = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
             - else
+              = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
+
+          // 自分をフォローしている　＆　自分がフォローしていない人を出す
+          %p友達かも？
+          - @users_follower.each do |user|
+            - unless current_user.following?(user)
+              = user.name
               = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
 
     // メイン画面
