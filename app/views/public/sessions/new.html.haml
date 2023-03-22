@@ -28,4 +28,17 @@
             = f.label :remember_me
         .actions.mt-3
           = f.submit "ログイン", class: "btn btn-primary"
-      = render "public/shared/links"
+      // = render "public/shared/links"
+      .text-center
+        .btn.btn-sm.btn-success.my-1{"data-target" => "#modalSignUp", "data-toggle" => "modal", type: "button" }
+          新規登録<i class="fas fa-plus"></i>
+
+      #modalSignUp.modal.fade.bd-example-modal-lg{"aria-hidden" => "true", "aria-labelledby" => "modalSignUpTitle", role: "dialog", tabindex: "-1"}
+        .modal-dialog.modal-lg{role: "document"}
+          .modal-content
+            .modal-header
+              %h5#modalSignUpTitle.modal-title 新規登録画面<i class="fas fa-plus"></i>
+              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                %span{"aria-hidden" => "true"} ×
+            .modal-body.text-left(style="word-wrap: break-word;")
+              = render "public/registrations/new"

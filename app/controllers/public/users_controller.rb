@@ -4,6 +4,7 @@ class Public::UsersController < ApplicationController
     # @users = User.all.where.not(id: current_user.id)
     @users = current_user.following_users
     @rooms = current_user.rooms
+    @users_follower = current_user.follower_user
 
     # 何かしらのユーザーの検索を行った時
     word = params[:word]
@@ -25,7 +26,7 @@ class Public::UsersController < ApplicationController
       @messages = @room.messages.includes(:user)
     end
   end
-  
+
   def update
     if current_user.update(user_params)
       redirect_to root_path
@@ -36,7 +37,7 @@ class Public::UsersController < ApplicationController
       render :show
     end
   end
-  
+
   private
   def user_params
     params.require(:user).permit(:name, :nickname, :phone_number, :search_id, :email)
