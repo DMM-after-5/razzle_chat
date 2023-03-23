@@ -16,7 +16,7 @@
             .modal-header
               %h5#modalUserEditTitle.modal-title ユーザー情報編集<i class="fas fa-plus"></i>
               %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
-                %span{"aria-hidden" => "true"} ×
+                %span{"aria-hisdden" => "true"} ×
             .modal-body.text-left(style="word-wrap: break-word;")
               // モーダルの中身
               = form_with model: current_user, url: users_path, method: :patch do |f|
@@ -190,32 +190,15 @@
         // チャット画面
         .container
           // N+1問題対策のため@messagesにはユーザーデータも含めてあります
-          - @messages.each do |message|
-            .row
-              - user = message.user
-              - if user == current_user
-                .col
-                .col.text-right
-                  %small
-                    = user.name
-                    = message.created_at.strftime('%Y/%m/%d %H:%M')
-                  .bg-info.rounded.m-1.p-1
-                    = message.message
-              - else
-                .col
-                  %small
-                    = user.name
-                    = message.created_at.strftime('%Y/%m/%d %H:%M')
-                  .bg-secondary.rounded.m-1.p-1
-                    = message.message
-                .col
+          #messages
+            = render "public/messages/message", messages: @messages
 
           // 投稿フォーム
           .row
             - if @room.entried?(current_user)
               // ルーム参加時
               = form_with model: Message.new, url: messages_path, method: :post, class: "input-group" do |f|
-                = f.text_area :message, class: "form-control", rows: "3"
+                = f.text_field :message, class: "form-control", rows: "3", data: { behavior: 'room_speaker' }
                 = f.hidden_field :room_id, :value => @room.id
                 .input-group-append
                   = f.submit "送信", class:"btn btn-outline-secondary"
