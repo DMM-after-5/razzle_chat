@@ -1,9 +1,9 @@
 class Public::UsersController < ApplicationController
   def show
+    # ActionCable側で current_user のidを取得できるようクッキーにidを保存しています
+    # app/channels/application_cable/connection.rb でこのクッキーを呼び出しています
     cookies.signed[:user_id] = current_user.id
 
-    # current_user以外を取得
-    # @users = User.all.where.not(id: current_user.id)
     @users = current_user.following_users
     @rooms = current_user.rooms
     @users_follower = current_user.follower_user

@@ -189,9 +189,9 @@
 
         // チャット画面
         .container
-          // N+1問題対策のため@messagesにはユーザーデータも含めてあります
-          #messages
-            = render "public/messages/message", messages: @messages
+          // メッセージ一覧（部分テンプレート化済み）
+          // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
+          #messages= render "public/messages/message", messages: @messages
 
           // 投稿フォーム
           .row

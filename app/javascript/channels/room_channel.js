@@ -1,8 +1,11 @@
+// このファイルは「WebSocket処理のクライアントサイド側」を受け持っています
+
 import consumer from "./consumer"
 
 consumer.subscriptions.create("RoomChannel", {
+
+  // 接続時のコールバックメソッド
   connected() {
-    // Called when the subscription is ready for use on the server
     document.
       querySelector('input[data-behavior="room_speaker"]').
       addEventListener('keypress', (event) => {
@@ -14,17 +17,20 @@ consumer.subscriptions.create("RoomChannel", {
     });
   },
 
+  // 切断時のコールバックメソッド
   disconnected() {
     // Called when the subscription has been terminated by the server
   },
 
+  // サーバーからのデータを受信した時のコールバックメソッド
   received(data) {
-    // Called when there's incoming data on the websocket for this channel
     const element = document.querySelector('#messages')
     element.insertAdjacentHTML('beforeend', data['message'])
   },
 
+  //
   speak: function(message) {
+    // this.perform('speak') はサーバーサイドのspeakメソッドをWebSocket通信経由で呼び出します
     return this.perform('speak', {message: message});
   }
 });
