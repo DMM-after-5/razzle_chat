@@ -1,18 +1,21 @@
 .container-fluid
   .row
-    .col.text-center.my-5
-      // サイトタイトル
-      %h1 Razzle Chat
-  .row
-    .col.col-5.text-center.mx-auto
-      %h2
-        新規登録
-        <i class="fas fa-user-plus"></i>
+    .col.text-center.mx-auto
       = form_with model: resource, url: user_registration_path, id: 'new_user', class: 'new_user was-validated', local: true do |f|
         = render "public/shared/error_messages", resource: resource
         .field.mt-5
           = f.email_field :email, autofocus: true, class: "form-control", id: "validationTextarea", placeholder: "メールアドレス", required: true
           .invalid-feedback メールアドレスを入力してください。
+
+        .field.mt-3
+          = f.text_field :name, class: "form-control", id: "validationTextarea", placeholder: "お名前", required: true
+          .invalid-feedback お名前を入力してください。
+        .field.mt-3
+          = f.text_field :nickname, class: "form-control", id: "validationTextarea", placeholder: "ニックネーム", required: true
+          .invalid-feedback ニックネームを入力してください。
+        .field.mt-3
+          = f.number_field :phone_number, class: "form-control", id: "validationTextarea", placeholder: "電話番号", required: true
+          .invalid-feedback 電話番号を入力してください。
         .field.mt-3
           = f.password_field :password, class: "form-control", id: "validationTextarea", placeholder: "パスワード", required: true
           .invalid-feedback
@@ -23,15 +26,6 @@
         .field.mt-3
           = f.password_field :password_confirmation, class: "form-control", id: "validationTextarea", placeholder: "パスワード(確認用)", required: true
           .invalid-feedback 確認のため同じパスワードを入力してください。
-        .field.mt-3
-          = f.text_field :name, class: "form-control", id: "validationTextarea", placeholder: "お名前", required: true
-          .invalid-feedback お名前を入力してください。
-        .field.mt-3
-          = f.text_field :nickname, class: "form-control", id: "validationTextarea", placeholder: "ニックネーム", required: true
-          .invalid-feedback ニックネームを入力してください。
-        .field.mt-3
-          = f.number_field :phone_number, class: "form-control", id: "validationTextarea", placeholder: "電話番号", required: true
-          .invalid-feedback 電話番号を入力してください。
         .actions.my-3
           = f.submit "新規登録", class: "btn btn-success"
-      = render "public/shared/links"
+      // = render "public/shared/links"

@@ -12,6 +12,16 @@ class Public::EntriesController < ApplicationController
   end
 
   def create_all
+    @room = Room.find(params[:entry][:room_id])
+    number = Entry.where(room_id: @room.id).length + params[:user_ids].length
+    if number > @room.members_status.to_i
+      if @room.owner_id == current_user.id
+        @room.update(members_status: number)
+      else
+        redirect_to root_path, alert: "招待に失敗しました(人数をオーバーしています)"
+        return
+      end
+    end
     params[:user_ids].each do |user_id|
       @entry = Entry.new(entry_params)
       @entry.user_id = user_id

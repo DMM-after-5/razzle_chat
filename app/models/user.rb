@@ -30,4 +30,8 @@ class User < ApplicationRecord
     following_users.include?(user)
   end
 
+  def followering?(user)
+    follower_user.include?(user)
+  end
+
 end
