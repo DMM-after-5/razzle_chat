@@ -1,4 +1,4 @@
-# このファイルを「チャネル」と呼び、「WebSocket処理のサーバーサイド側」を受け持っています
+# このファイルを「チャネル」と呼び、「WebSocket処理のサーバーサイド」を受け持っています
 # （クライアント側は app/javascript/channels/room_channel.js）
 # チャネルはWebsocket通信におけるコントローラのような役割を果たします
 # クライアントはWebsocket通信を通じてチャネルと関連付けされる＝「購読（subscription）」
@@ -21,8 +21,9 @@ class RoomChannel < ApplicationCable::Channel
 
   # 購読しているクライアントから呼び出された時に実行されるメソッド
   def speak(data)
-    # room_idを渡したい・・
-    message = Message.create!(message: data["message"], user_id: current_user.id, room_id: 1)
+    # クライアント側から送られてきたデータ(data)でメッセージのレコードを作ります
+    message = Message.create!(message: data["message"], user_id: current_user.id, room_id: data["room_id"])
+    # チャネルを購読している人へブロードキャスト！
     ActionCable.server.broadcast(
       "room_channel", { message: data["message"] }
     )
