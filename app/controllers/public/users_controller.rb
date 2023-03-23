@@ -1,5 +1,7 @@
 class Public::UsersController < ApplicationController
   def show
+    cookies.signed[:user_id] = current_user.id
+
     # current_user以外を取得
     # @users = User.all.where.not(id: current_user.id)
     @users = current_user.following_users
