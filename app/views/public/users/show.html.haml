@@ -188,7 +188,7 @@
                 = render "public/rooms/room_form", room: @room, submit_text: "変更を保存"
 
         // チャット画面
-        .container
+        .container(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
           #messages= render "public/messages/message", messages: @messages
