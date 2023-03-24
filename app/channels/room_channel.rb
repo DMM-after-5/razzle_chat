@@ -11,7 +11,11 @@ class RoomChannel < ApplicationCable::Channel
     # 「room_channel」というストリーム名を設定しています
     # 接続しているクライアントへメッセージを送る（ブロードキャスト）時にこのストリーム名を使用します
     # ここではspeakメソッドでブロードキャストする時に使っています
-    stream_from "room_channel"
+    @user = User.find(params[:user_id])
+    reject if @user.nil?
+    @chatroom = Room.find(params[:chatroom_id])
+    reject if @chatroom.nil?
+    stream_from "room_channel_#{params[:chatroom_id]}"
   end
 
   # 購読解除後に呼び出されるメソッド
@@ -25,13 +29,15 @@ class RoomChannel < ApplicationCable::Channel
     message = Message.create!(message: data["message"], user_id: current_user.id, room_id: data["room_id"])
     # チャネルを購読している人へブロードキャスト！
     ActionCable.server.broadcast(
-      "room_channel", { message: data["message"] }
+      "room_channel_#{data["room_id"]}", { message: data["message"] }
+      # "room_channel_#{data["room_id"]}", { message: render_message(message) }
     )
   end
 
   private
 
   def render_message(message)
+    # ApplicationController.renderを使うと、コントローラ外からテンプレートのレンダリングを行うことができる
     ApplicationController.render(
       partial: "public/messages/message",
       locals: { messages: @messages }
