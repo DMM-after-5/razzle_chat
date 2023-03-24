@@ -1,19 +1,18 @@
-- messages.each do |message|
-  .row
-    - user = message.user
-    - if user == current_user
-      .col
-      .col.text-right
-        %small
-          = user.name
-          = message.created_at.strftime('%Y/%m/%d %H:%M')
-        .bg-info.rounded.m-1.p-1
-          = message.message
-    - else
-      .col
-        %small
-          = user.name
-          = message.created_at.strftime('%Y/%m/%d %H:%M')
-        .bg-secondary.rounded.m-1.p-1
-          = message.message
-      .col
+.row
+  - user = message.user
+  - if user == current_user
+    .col
+    .col.text-right
+      %small
+        = user.name
+        = message.created_at.strftime('%Y/%m/%d %H:%M')
+      .bg-info.rounded.m-1.p-1
+        = simple_format(message.message)
+  - else
+    .col
+      %small
+        = user.name
+        = message.created_at.strftime('%Y/%m/%d %H:%M')
+      .bg-secondary.rounded.m-1.p-1
+        = simple_format(message.message)
+    .col

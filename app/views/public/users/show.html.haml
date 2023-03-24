@@ -191,7 +191,9 @@
         .container(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
-          #messages= render "public/messages/message", messages: @messages
+          #messages
+            - @messages.each do |message|
+              = render "public/messages/message", message: message
 
           // 投稿フォーム
           .row
