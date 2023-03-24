@@ -189,19 +189,19 @@
 
         // チャット画面
         .container
-          // N+1問題対策のため@messagesにはユーザーデータも含めてあります
-          #messages
-            = render "public/messages/message", messages: @messages
+          // メッセージ一覧（部分テンプレート化済み）
+          // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
+          #messages= render "public/messages/message", messages: @messages
 
           // 投稿フォーム
           .row
             - if @room.entried?(current_user)
               // ルーム参加時
               = form_with model: Message.new, url: messages_path, method: :post, class: "input-group" do |f|
-                = f.text_field :message, class: "form-control", rows: "3", data: { behavior: 'room_speaker' }
-                = f.hidden_field :room_id, :value => @room.id
+                = f.text_area :message, class: "form-control", rows: "3", data: { behavior: 'chatFormText' }
+                = f.hidden_field :room_id, :value => @room.id, data: { behavior: 'chatFormRoomId' }
                 .input-group-append
-                  = f.submit "送信", class:"btn btn-outline-secondary"
+                  = f.submit "送信", class:"btn btn-outline-secondary", data: { behavior: 'chatFormSubmit' }
             - else
               // ルーム未参加時
               .text-center
