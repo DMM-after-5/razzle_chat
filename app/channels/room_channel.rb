@@ -26,11 +26,11 @@ class RoomChannel < ApplicationCable::Channel
   # 購読しているクライアントから呼び出された時に実行されるメソッド
   def speak(data)
     # クライアント側から送られてきたデータ(data)でメッセージのレコードを作ります
-    message = Message.create!(message: data["message"], user_id: current_user.id, room_id: data["room_id"])
+    message = Message.create!(message: data["message"], user_id: params[:user_id], room_id: data["room_id"])
     # チャネルを購読している人へブロードキャスト！
     ActionCable.server.broadcast(
-      "room_channel_#{data["room_id"]}", { message: data["message"] }
-      # "room_channel_#{data["room_id"]}", { message: render_message(message) }
+      # "room_channel_#{data["room_id"]}", { message: data["message"] }
+      "room_channel_#{message.room_id}", { message: render_message(message) }
     )
   end
 
@@ -38,9 +38,10 @@ class RoomChannel < ApplicationCable::Channel
 
   def render_message(message)
     # ApplicationController.renderを使うと、コントローラ外からテンプレートのレンダリングを行うことができる
-    ApplicationController.render(
+    ApplicationController.render_with_signed_in_user(
+      message.user,
       partial: "public/messages/message",
-      locals: { messages: @messages }
+      locals: { message: message }
     )
   end
 end
