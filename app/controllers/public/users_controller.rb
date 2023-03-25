@@ -1,9 +1,12 @@
 class Public::UsersController < ApplicationController
   def show
-    # current_user以外を取得
-    # @users = User.all.where.not(id: current_user.id)
+    # ActionCable側で current_user のidを取得できるようクッキーにidを保存しています
+    # app/channels/application_cable/connection.rb でこのクッキーを呼び出しています
+    cookies.signed[:user_id] = current_user.id
+
     @users = current_user.following_users
     @rooms = current_user.rooms
+    @users_follower = current_user.follower_user
 
     # 何かしらのユーザーの検索を行った時
     word = params[:word]
@@ -24,5 +27,21 @@ class Public::UsersController < ApplicationController
       # N+1問題を解消するためユーザー情報を含めたルームのメッセージを取得しています（users#showの@messages.eachの中でmessage.userと記述しているためbulletがエラーを出していました）
       @messages = @room.messages.includes(:user)
     end
+  end
+
+  def update
+    if current_user.update(user_params)
+      redirect_to root_path
+    else
+      @users = current_user.following_users
+      @rooms = current_user.rooms
+      flash.now[:alert] = "ユーザー情報の編集に失敗しました"
+      render :show
+    end
+  end
+
+  private
+  def user_params
+    params.require(:user).permit(:name, :nickname, :phone_number, :search_id, :email)
   end
 end

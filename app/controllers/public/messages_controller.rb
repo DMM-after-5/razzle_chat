@@ -3,7 +3,7 @@ class Public::MessagesController < ApplicationController
   def create
     @message = current_user.messages.new(message_params)
     @message.save
-    redirect_to request.referer
+    # redirect_to request.referer
   end
 
   def destroy
