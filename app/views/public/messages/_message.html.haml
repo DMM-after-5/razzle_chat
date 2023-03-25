@@ -1,6 +1,6 @@
-.row
+.row.test1
   - user = message.user
-  - if user == current_user
+  - if user.nickname == current_user.nickname
     .col
     .col.text-right
       %small
@@ -16,3 +16,16 @@
       .bg-secondary.rounded.m-1.p-1
         = simple_format(message.message)
     .col
+:javascript
+    // チャットの振り分け
+  document.getElementsByClassName("bg-info")
+    
+  if ()
+    
+    
+    if ($('#messages').data('current_user_id') == "#{message.user_id}") {
+      $('#messageid<%= message.id %>').addClass('red')
+    } else {
+      $('#messageid<%= message.id %>').addClass('red')
+    }
+  }

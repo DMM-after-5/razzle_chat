@@ -46,6 +46,7 @@ document.addEventListener('turbolinks:load', () => {
       // サーバーサイドからのデータを受信するメソッド
       received(data) {
         const element = document.querySelector('#messages')
+        console.log(element);
         element.insertAdjacentHTML('beforeend', data['message'])
       },
 
