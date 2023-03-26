@@ -65,11 +65,6 @@
         // ルーム一覧
         .tab-pane.fade.show.active.list-group(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
 
-          // ルームIDをJavascriptに渡すテスト中
-          - if @room.present?
-            .test_id2.d-none
-              = @room.id
-
           // ルーム作成ボタン
           .text-center
             .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomNew", "data-toggle" => "modal", type: "button" }
@@ -119,13 +114,13 @@
           //   = render "user_list", users: @users
 
           - @users.each do |user|
-            = user.name
+            %span.list-group-item
+              = user.name
 
-
-            - if current_user.following?(user)
-              = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
-            - else
-              = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
+              - if current_user.following?(user)
+                = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
+              - else
+                = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
 
           // 自分をフォローしている　＆　自分がフォローしていない人を出す
           %p友達かも？
@@ -191,7 +186,7 @@
         .container(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
-          #messages
+          #messages(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 378px);")
             - @messages.each do |message|
               = render "public/messages/message", message: message
 
@@ -242,8 +237,4 @@
     } else {
 
     };
-
-    // ルームIDを取得
-    let roomId = document.getElementsByClassName("test_id2")[0].innerHTML;
-    console.log(roomId);
   };
