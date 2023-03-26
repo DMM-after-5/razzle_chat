@@ -46,8 +46,37 @@ document.addEventListener('turbolinks:load', () => {
       // サーバーサイドからのデータを受信するメソッド
       received(data) {
         const element = document.querySelector('#messages')
-        console.log(element);
-        element.insertAdjacentHTML('beforeend', data['message'])
+        if (userId == data['user_id']) {
+          element.insertAdjacentHTML('beforeend',
+          `<div class="row">
+          <div class="col"></div>
+          <div class="col text-right">
+          <small>
+          ${data['user_name']}
+          ${data['created_at']}
+          </small>
+          <div class="bg-info rounded m-1 p-1">
+          <p>${data['message']}</p>
+          </div>
+          </div>
+          </div>`
+          )
+        } else {
+          element.insertAdjacentHTML('beforeend',
+          `<div class="row">
+          <div class="col">
+          <small>
+          ${data['user_name']}
+          ${data['created_at']}
+          </small>
+          <div class="bg-secondary rounded m-1 p-1">
+          <p>${data['message']}</p>
+          </div>
+          </div>
+          <div class="col"></div>
+          </div>`
+          )
+        }
       },
 
       // サーバーサイドへメッセージを送信するメソッド
