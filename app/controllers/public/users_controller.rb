@@ -25,7 +25,7 @@ class Public::UsersController < ApplicationController
     if params[:room_id].present?
       @room = Room.find(params[:room_id])
       # N+1問題を解消するためユーザー情報を含めたルームのメッセージを取得しています（users#showの@messages.eachの中でmessage.userと記述しているためbulletがエラーを出していました）
-      @messages = @room.messages.includes(:user).page(params[:page]).per(20)
+      @messages = @room.messages.includes(:user).page(params[:page]).per(5)
     end
   end
 

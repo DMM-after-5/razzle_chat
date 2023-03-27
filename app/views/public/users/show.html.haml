@@ -188,8 +188,10 @@
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
           #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 378px);")
             - @messages.each do |message|
-              = render "public/messages/message", message: message
-            = paginate @messages
+              .read_in
+                = render "public/messages/message", message: message
+                = paginate @messages
+              
 
           // 投稿フォーム
           .row
@@ -243,10 +245,11 @@
 :javascript
   $(document).on('turbolinks:load', function() {
     $('.jscroll').jscroll({ // 追加したdivのclass名と合わせる
-      contentSelector: '.jscroll',
+      contentSelector: '.read_in',
       nextSelector: '.next a',  // 次ページリンクのセレクタ
       loadingHtml: '読み込み中',
       padding: 10,
       bind: 'append'
+      
     });
   });
