@@ -31,4 +31,11 @@ class Public::RoomsController < ApplicationController
   def room_params
     params.require(:room).permit(:owner_id, :members_status, :name, :introduction, :is_deleted)
   end
+
+  def ensure_room
+    room = Room.find(params[:id])
+    unless room.owner_id == current_user.id
+      redirect_to root_path, alert: 'ルームのオーナーのみ編集可能です'
+    end
+  end
 end

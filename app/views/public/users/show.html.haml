@@ -136,16 +136,17 @@
         %h1
           = @room.name
 
-          // モーダル
-          .text-center
+          .d-flex
+            // モーダル
             .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEntry", "data-toggle" => "modal", type: "button" }
               ルームへ招待<i class="fas fa-plus"></i>
 
-          //= link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
+            //= link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
 
-          // ルーム編集ボタン
-          .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
-            ルームを編集する<i class="fas fa-edit"></i>
+            // ルーム編集ボタン
+            - if @room.owner_id == current_user.id
+              .btn.btn-sm.btn-success.my-1.ml-2{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
+                ルームを編集する<i class="fas fa-edit"></i>
 
         // モーダルでルーム作成フォームを表示する記述
         #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
