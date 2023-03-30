@@ -159,7 +159,7 @@
                 .modal-body.text-left(style="word-wrap: break-word;")
                   = form_with model: Entry.new, url: create_all_path, method: :post do |f|
                     - count = 0
-                    - @users.each do |user|
+                    - @mutual_follows.each do |user|
                       - unless @room.users.any?{|room_user| room_user == user}
                         = f.hidden_field :room_id, :value => @room.id
                         = check_box_tag "user_ids[]", user.id

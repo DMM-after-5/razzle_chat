@@ -1,4 +1,6 @@
 class Public::RoomsController < ApplicationController
+  before_action :authenticate_user!
+  before_action :ensure_room, only: [:update]
 
   def create
     room = Room.new(room_params)

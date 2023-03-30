@@ -10,6 +10,7 @@ class Public::UsersController < ApplicationController
     @users = current_user.following_users
     @rooms = current_user.rooms
     @users_follower = current_user.follower_user
+    @mutual_follows = @users & @users_follower
 
     # 何かしらのユーザーの検索を行った時
     word = params[:word]
