@@ -6,9 +6,14 @@
     .col.border.bg-secondary
       ルーム名
     .col.col-2.border.bg-secondary
-      = "#{current_user.name} ログイン中"
-      .btn.btn-sm.btn-success.my-1{"data-target" => "#modalUserEdit", "data-toggle" => "modal", type: "button" }
-        ユーザーの編集
+      .btn-group
+        #button(type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+          <i class="fas fa-user"></i>
+          = "#{current_user.name}"
+        .dropdown-menu.dropdown-menu-right.p-2
+          .dropdown-item.my-1{"data-target" => "#modalUserEdit", "data-toggle" => "modal", type: "button" }
+            ユーザーの編集
+          = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "dropdown-item"
 
       #modalUserEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalUserEditTitle", role: "dialog", tabindex: "-1"}
         .modal-dialog{role: "document"}
@@ -41,8 +46,6 @@
                   = f.text_field :search_id, class: "form-control", placeholder: "検索用ID"
                 .mt-3
                   = f.submit "更新", class: "btn btn-success"
-
-      = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "btn btn-info"
 
   // ページ下部
   .row(style="height: 85vh;")
@@ -82,9 +85,6 @@
                   // モーダルの中身
                   = render "public/rooms/room_form", room: Room.new, submit_text: "ルーム作成"
 
-
-
-
           - @rooms.each do |room|
             -# %p{"data-tablinks" => "off"}
             - if room == @room
@@ -92,12 +92,14 @@
                 = room.name
                 %span.badge.badge-secondary.badge-pill= room.messages.count
             - else
-              = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center list-group-item-action" do
-                = room.name
-                %span.badge.badge-primary.badge-pill= room.messages.count
-            - entry = room.entries.find_by(user_id: current_user)
-            - if room.entried?(current_user) == false
-              = link_to '参加する', entry_path(entry.id), method: :patch
+              - if room.entried?(current_user)
+                = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center list-group-item-action" do
+                  = room.name
+                  %span.badge.badge-primary.badge-pill= room.messages.count
+              - else
+                = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item list-group-item-warning d-flex justify-content-between align-items-center list-group-item-action" do
+                  = room.name
+                  %span.badge.badge-primary.badge-pill= room.messages.count
 
         // フレンド一覧
         .tab-pane.fade.list-group(id="friends" role="tabpanel" aria-labelledby="friends-tab")
@@ -187,7 +189,7 @@
         .container(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
-          #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 378px);")
+          #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 317px);")
             - @messages.each do |message|
               = render "public/messages/message", message: message
             = paginate @messages
@@ -205,6 +207,8 @@
               // ルーム未参加時
               .text-center
                 参加してメッセージを投稿しましょう
+                - entry = @room.entries.find_by(user_id: current_user)
+                = link_to '参加する', entry_path(entry.id), method: :patch
 
       - else
         %h1 ルーム未選択です
