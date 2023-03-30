@@ -7,9 +7,14 @@ class Public::UsersController < ApplicationController
     # app/channels/application_cable/connection.rb でこのクッキーを呼び出しています
     cookies.signed[:user_id] = current_user.id
 
+    # フレンド一覧
     @users = current_user.following_users
+    # ルーム一覧
     @rooms = current_user.rooms
+    # 自分をフォローしている人
     @users_follower = current_user.follower_user
+    # 相互フォローの人
+    @mutual_follows = @users & @users_follower
 
     # 何かしらのユーザーの検索を行った時
     word = params[:word]

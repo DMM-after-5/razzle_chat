@@ -65,7 +65,7 @@ class Public::EntriesController < ApplicationController
     params.require(:entry).permit(:user_id, :room_id)
   end
 
-  # 招待済みのルームか確認するためのメソッド
+  # 参加済みのルームか確認するためのメソッド
   def ensure_room
     if params[:entry][:room_id].present?
       @room = Room.find(params[:entry][:room_id])

@@ -33,5 +33,4 @@ class User < ApplicationRecord
   def followering?(user)
     follower_user.include?(user)
   end
-
 end
