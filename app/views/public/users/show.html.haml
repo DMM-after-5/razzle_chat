@@ -1,57 +1,12 @@
 .container-fluid
-  .row.text-center(style="height: 15vh;")
-    // マイページ上部
-    .col.col-2.border.bg-secondary
-      LOGO
-    .col.border.bg-secondary
-      ルーム名
-    .col.col-2.border.bg-secondary
-      .btn-group
-        #button(type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
-          <i class="fas fa-user"></i>
-          = "#{current_user.name}"
-        .dropdown-menu.dropdown-menu-right.p-2
-          .dropdown-item.my-1{"data-target" => "#modalUserEdit", "data-toggle" => "modal", type: "button" }
-            ユーザーの編集
-          = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "dropdown-item"
-
-      #modalUserEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalUserEditTitle", role: "dialog", tabindex: "-1"}
-        .modal-dialog{role: "document"}
-          .modal-content
-            .modal-header
-              %h5#modalUserEditTitle.modal-title ユーザー情報編集<i class="fas fa-plus"></i>
-              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
-                %span{"aria-hisdden" => "true"} ×
-            .modal-body.text-left(style="word-wrap: break-word;")
-              // モーダルの中身
-              = form_with model: current_user, url: users_path, method: :patch do |f|
-                .field.mt-3
-                  = f.label :name, "名前", class: "pl-2"
-                  = f.text_field :name, class: "form-control", id: "validationTextarea", placeholder: "お名前", required: true
-                  .invalid-feedback お名前を入力してください。
-                .field.mt-3
-                  = f.label :nickname, "ニックネーム", class: "pl-2"
-                  = f.text_field :nickname, class: "form-control", id: "validationTextarea", placeholder: "ニックネーム", required: true
-                  .invalid-feedback ニックネームを入力してください。
-                .field.mt-3
-                  = f.label :phone_number, "電話番号", class: "pl-2"
-                  = f.number_field :phone_number, class: "form-control", id: "validationTextarea", placeholder: "電話番号", required: true
-                  .invalid-feedback 電話番号を入力してください。
-                .field.mt-3
-                  = f.label :email, "メールアドレス", class: "pl-2"
-                  = f.email_field :email, autofocus: true, class: "form-control", id: "validationTextarea", placeholder: "メールアドレス", required: true
-                  .invalid-feedback メールアドレスを入力してください。
-                .field.mt-3
-                  = f.label :search_id, "検索用ID", class: "pl-2"
-                  = f.text_field :search_id, class: "form-control", placeholder: "検索用ID"
-                .mt-3
-                  = f.submit "更新", class: "btn btn-success"
-
-  // ページ下部
-  .row(style="height: 85vh;")
+  .row.vh-100
 
     // 左のサイドバー
     .col.col-2.p-0
+
+      .row.bg-info.align-items-center.justify-content-center.m-0.mb-2(style="height: 100px;")
+        .col.p-0
+          %h1.text-center LOGO
 
       // タブ
       %ul.nav.nav-tabs(id="myTab" role="tablist")
@@ -88,18 +43,30 @@
           - @rooms.each do |room|
             -# %p{"data-tablinks" => "off"}
             - if room == @room
+              // 選択しているルーム
               = link_to root_path, data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center active" do
                 = room.name
-                %span.badge.badge-secondary.badge-pill= room.messages.count
+                - if room.entried?(current_user)
+                  %span.badge.badge-secondary.badge-pill= room.messages.count
+                - else
+                  %span.badge.badge-danger.badge-pill 未参加
             - else
+              // 未選択のルーム
               - if room.entried?(current_user)
-                = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center list-group-item-action" do
-                  = room.name
-                  %span.badge.badge-primary.badge-pill= room.messages.count
+                // 参加しているルーム
+                - if room.owner_id == current_user.id
+                  = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+                    = room.name
+                    %span.badge.badge-primary.badge-pill= room.messages.count
+                - else
+                  = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center list-group-item-action" do
+                    = room.name
+                    %span.badge.badge-primary.badge-pill= room.messages.count
               - else
+                // 未参加のルーム
                 = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item list-group-item-warning d-flex justify-content-between align-items-center list-group-item-action" do
                   = room.name
-                  %span.badge.badge-primary.badge-pill= room.messages.count
+                  %span.badge.badge-danger.badge-pill 未参加
 
         // フレンド一覧
         .tab-pane.fade.list-group(id="friends" role="tabpanel" aria-labelledby="friends-tab")
@@ -111,14 +78,9 @@
             = f.submit "検索", id: "user_list"
           = link_to "リセット", root_path, method: :get
 
-          // ユーザー一覧の部分テンプレート呼び出し
-          // #user_lists
-          //   = render "user_list", users: @users
-
           - @users.each do |user|
             %span.list-group-item
-              = user.name
-
+              = user.nickname
               - if current_user.following?(user)
                 = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
               - else
@@ -128,52 +90,122 @@
           %p友達かも？
           - @users_follower.each do |user|
             - unless current_user.following?(user)
-              = user.name
+              = user.nickname
               = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
 
     // メイン画面
-    .col
+    .col.border-left
+      // 画面右上にプルダウンメニューを表示
+      .fixed-top
+        .btn-group.float-right.mt-2.mr-2
+          #button(type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+            <i class="fas fa-user"></i>
+            = current_user.nickname
+          .dropdown-menu.dropdown-menu-right.p-2
+            .dropdown-item.my-1{"data-target" => "#modalUserEdit", "data-toggle" => "modal", type: "button" }
+              ユーザーの編集
+            = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "dropdown-item"
+
+      #modalUserEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalUserEditTitle", role: "dialog", tabindex: "-1"}
+        .modal-dialog{role: "document"}
+          .modal-content
+            .modal-header
+              %h5#modalUserEditTitle.modal-title ユーザー情報編集<i class="fas fa-plus"></i>
+              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                %span{"aria-hisdden" => "true"} ×
+            .modal-body.text-left(style="word-wrap: break-word;")
+              // モーダルの中身
+              = form_with model: current_user, url: users_path, method: :patch do |f|
+                .field.mt-3
+                  = f.label :name, "名前", class: "pl-2"
+                  = f.text_field :name, class: "form-control", id: "validationTextarea", placeholder: "お名前", required: true
+                  .invalid-feedback お名前を入力してください。
+                .field.mt-3
+                  = f.label :nickname, "ニックネーム", class: "pl-2"
+                  = f.text_field :nickname, class: "form-control", id: "validationTextarea", placeholder: "ニックネーム", required: true
+                  .invalid-feedback ニックネームを入力してください。
+                .field.mt-3
+                  = f.label :phone_number, "電話番号", class: "pl-2"
+                  = f.number_field :phone_number, class: "form-control", id: "validationTextarea", placeholder: "電話番号", required: true
+                  .invalid-feedback 電話番号を入力してください。
+                .field.mt-3
+                  = f.label :email, "メールアドレス", class: "pl-2"
+                  = f.email_field :email, autofocus: true, class: "form-control", id: "validationTextarea", placeholder: "メールアドレス", required: true
+                  .invalid-feedback メールアドレスを入力してください。
+                .field.mt-3
+                  = f.label :search_id, "検索用ID", class: "pl-2"
+                  = f.text_field :search_id, class: "form-control", placeholder: "検索用ID"
+                .mt-3
+                  = f.submit "更新", class: "btn btn-success"
+
+
       // ルーム選択時
       - if @room.present?
         %h1
           = @room.name
-
           .d-flex
-            // モーダル
+            // フレンド招待ボタン
             .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEntry", "data-toggle" => "modal", type: "button" }
-              ルームへ招待<i class="fas fa-plus"></i>
+              フレンド招待 <i class="fas fa-user-plus"></i>
 
-            //= link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
+            // 参加者一覧ボタン
+            .btn.btn-sm.btn-success.my-1.ml-2{"data-target" => "#modalRoomUsers", "data-toggle" => "modal", type: "button"}
+              参加者一覧 <i class="fas fa-users"></i>
 
-            // ルーム編集ボタン
+            // ルーム編集ボタン（オーナーのみ表示させる）
             - if @room.owner_id == current_user.id
-              .btn.btn-sm.btn-success.my-1.ml-2{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
-                ルームを編集する<i class="fas fa-edit"></i>
+              .btn.btn-sm.btn-warning.my-1.ml-2{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
+                ルーム編集 <i class="fas fa-edit"></i>
 
-        // モーダルでルーム作成フォームを表示する記述
+        // モーダルで参加者一覧画面を表示する記述
+        #modalRoomUsers.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomUsersTitle", role: "dialog", tabindex: "-1"}
+          .modal-dialog{role: "document"}
+            .modal-content
+              .modal-header
+                %h5#modalRoomUsersTitle.modal-title 参加者一覧<i class="fas fa-users"></i>
+                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                  %span{"aria-hidden" => "true"} ×
+              .modal-body.text-left(style="word-wrap: break-word;")
+                // モーダルの中身
+                .list-group
+                  - @room.users.each do |user|
+                    .list-group-item
+                      - if @room.entried?(user)
+                        - if user.id == @room.owner_id
+                          = user.nickname + " (オーナー)"
+                        - else
+                          = user.nickname
+                      - else
+                        = user.nickname + " (招待中)"
+
+        // モーダルでフレンド招待画面を表示する記述
         #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
           .modal-dialog{role: "document"}
             .modal-content
               .modal-header
-                %h5#modalRoomEntryTitle.modal-title
-                  フレンド招待<i class="fas fa-plus"></i>
-                  %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
-                    %span{"aria-hidden" => "true"} ×
-                .modal-body.text-left(style="word-wrap: break-word;")
-                  = form_with model: Entry.new, url: create_all_path, method: :post do |f|
-                    - count = 0
+                %h5#modalRoomEntryTitle.modal-title フレンド招待<i class="fas fa-plus"></i>
+                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                  %span{"aria-hidden" => "true"} ×
+              .modal-body.text-left(style="word-wrap: break-word;")
+                %small
+                  招待したいフレンドにチェックして送信ボタンを押してください。
+                = form_with model: Entry.new, url: create_all_path, method: :post do |f|
+                  - count = 0
+                  .list-group
                     - @mutual_follows.each do |user|
                       - unless @room.users.any?{|room_user| room_user == user}
                         = f.hidden_field :room_id, :value => @room.id
-                        = check_box_tag "user_ids[]", user.id
-                        = user.name
+                        .list-group-item
+                          = check_box_tag "user_ids[]", user.id
+                          = user.nickname
                         - count += 1
+                  .modal-footer.mt-3
                     - if count == 0
                       = "招待を送れるユーザーがいません"
                     - else
-                      = submit_tag "送信"
+                      = submit_tag "送信", class: "btn btn-info"
 
-        // モーダルでルーム編集フォームを表示する記述
+        // モーダルでルーム編集画面を表示する記述
         #modalRoomEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEditTitle", role: "dialog", tabindex: "-1"}
           .modal-dialog{role: "document"}
             .modal-content
@@ -189,7 +221,7 @@
         .container(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
-          #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 317px);")
+          #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 185px);")
             - @messages.each do |message|
               = render "public/messages/message", message: message
             = paginate @messages
