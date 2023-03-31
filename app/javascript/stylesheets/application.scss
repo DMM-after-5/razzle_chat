@@ -1,5 +1,10 @@
 @import '~bootstrap/scss/bootstrap';
 @import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import url('https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c');
+
+* {
+  font-family: 'M PLUS Rounded 1c', sans-serif;
+}
 
 #modal {
   position: relative;
