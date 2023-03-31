@@ -66,14 +66,9 @@
             = f.submit "検索", id: "user_list"
           = link_to "リセット", root_path, method: :get
 
-          // ユーザー一覧の部分テンプレート呼び出し
-          // #user_lists
-          //   = render "user_list", users: @users
-
           - @users.each do |user|
             %span.list-group-item
-              = user.name
-
+              = user.nickname
               - if current_user.following?(user)
                 = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
               - else
@@ -83,7 +78,7 @@
           %p友達かも？
           - @users_follower.each do |user|
             - unless current_user.following?(user)
-              = user.name
+              = user.nickname
               = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
 
     // メイン画面
@@ -93,12 +88,11 @@
         .btn-group.float-right.mt-2.mr-2
           #button(type="button" class="btn btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
             <i class="fas fa-user"></i>
-            = "#{current_user.name}"
+            = current_user.nickname
           .dropdown-menu.dropdown-menu-right.p-2
             .dropdown-item.my-1{"data-target" => "#modalUserEdit", "data-toggle" => "modal", type: "button" }
               ユーザーの編集
             = link_to 'ログアウト', destroy_user_session_path, method: :delete, class: "dropdown-item"
-
 
       #modalUserEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalUserEditTitle", role: "dialog", tabindex: "-1"}
         .modal-dialog{role: "document"}
@@ -137,43 +131,69 @@
       - if @room.present?
         %h1
           = @room.name
-
           .d-flex
-            // モーダル
+            // フレンド招待ボタン
             .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomEntry", "data-toggle" => "modal", type: "button" }
-              ルームへ招待<i class="fas fa-user-plus"></i>
+              フレンド招待 <i class="fas fa-user-plus"></i>
 
-            //= link_to user.name, entries_path(params: { entry: { user_id: user.id, room_id: @room.id } }), method: :post, class: "list-group-item list-group-item-action"
+            // 参加者一覧ボタン
+            .btn.btn-sm.btn-success.my-1.ml-2{"data-target" => "#modalRoomUsers", "data-toggle" => "modal", type: "button"}
+              参加者一覧 <i class="fas fa-users"></i>
 
-            // ルーム編集ボタン
+            // ルーム編集ボタン（オーナーのみ表示させる）
             - if @room.owner_id == current_user.id
-              .btn.btn-sm.btn-success.my-1.ml-2{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
-                ルームを編集する<i class="fas fa-edit"></i>
+              .btn.btn-sm.btn-warning.my-1.ml-2{"data-target" => "#modalRoomEdit", "data-toggle" => "modal", type: "button"}
+                ルーム編集 <i class="fas fa-edit"></i>
 
-        // モーダルでルーム作成フォームを表示する記述
+        // モーダルで参加者一覧画面を表示する記述
+        #modalRoomUsers.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomUsersTitle", role: "dialog", tabindex: "-1"}
+          .modal-dialog{role: "document"}
+            .modal-content
+              .modal-header
+                %h5#modalRoomUsersTitle.modal-title 参加者一覧<i class="fas fa-users"></i>
+                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                  %span{"aria-hidden" => "true"} ×
+              .modal-body.text-left(style="word-wrap: break-word;")
+                // モーダルの中身
+                .list-group
+                  - @room.users.each do |user|
+                    .list-group-item
+                      - if @room.entried?(user)
+                        - if user.id == @room.owner_id
+                          = user.nickname + " (オーナー)"
+                        - else
+                          = user.nickname
+                      - else
+                        = user.nickname + " (招待中)"
+
+        // モーダルでフレンド招待画面を表示する記述
         #modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
           .modal-dialog{role: "document"}
             .modal-content
               .modal-header
-                %h5#modalRoomEntryTitle.modal-title
-                  フレンド招待<i class="fas fa-plus"></i>
-                  %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
-                    %span{"aria-hidden" => "true"} ×
-                .modal-body.text-left(style="word-wrap: break-word;")
-                  = form_with model: Entry.new, url: create_all_path, method: :post do |f|
-                    - count = 0
+                %h5#modalRoomEntryTitle.modal-title フレンド招待<i class="fas fa-plus"></i>
+                %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+                  %span{"aria-hidden" => "true"} ×
+              .modal-body.text-left(style="word-wrap: break-word;")
+                %small
+                  招待したいフレンドにチェックして送信ボタンを押してください。
+                = form_with model: Entry.new, url: create_all_path, method: :post do |f|
+                  - count = 0
+                  .list-group
                     - @mutual_follows.each do |user|
                       - unless @room.users.any?{|room_user| room_user == user}
                         = f.hidden_field :room_id, :value => @room.id
-                        = check_box_tag "user_ids[]", user.id
-                        = user.name
+                        .list-group-item
+                          = check_box_tag "user_ids[]", user.id
+                          = user.nickname
                         - count += 1
+                  .modal-footer.mt-3
                     - if count == 0
                       = "招待を送れるユーザーがいません"
                     - else
-                      = submit_tag "送信"
+                      = submit_tag "送信", class: "btn btn-info"
 
-        // モーダルでルーム編集フォームを表示する記述
+        // モーダルでルーム編集画面を表示する記述
         #modalRoomEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEditTitle", role: "dialog", tabindex: "-1"}
           .modal-dialog{role: "document"}
             .modal-content
