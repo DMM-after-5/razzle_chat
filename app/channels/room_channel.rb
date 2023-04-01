@@ -29,7 +29,7 @@ class RoomChannel < ApplicationCable::Channel
     message = Message.create!(message: data["message"], user_id: params[:user_id], room_id: data["room_id"])
     # チャネルを購読している人へブロードキャスト！
     ActionCable.server.broadcast(
-      "room_channel_#{message.room_id}", { user_id: message.user_id, message: message.message, user_name: message.user.name, created_at: message.created_at.strftime('%Y/%m/%d %H:%M') }
+      "room_channel_#{message.room_id}", { user_id: message.user_id, message: message.message, user_name: message.user.nickname, created_at: message.created_at.strftime('%Y/%m/%d %H:%M') }
     )
   end
 
