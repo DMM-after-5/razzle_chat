@@ -191,8 +191,8 @@
               .read_in
                 = render "public/messages/message", message: message
                 = paginate @messages
+                
               
-
           // 投稿フォーム
           .row
             - if @room.entried?(current_user)
