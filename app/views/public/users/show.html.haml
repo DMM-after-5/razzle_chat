@@ -95,19 +95,15 @@
               = link_to users_relationships_path(params: {user_id: user.id}), method: :delete, data: {confirm: "フォローを外しますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
                 = user.nickname
             - else
-              - if @room.present?
-                = link_to users_relationships_path(params: {user_id: user.id, room_id: @room.id}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
-                  = user.nickname
-              - else
-                = link_to users_relationships_path(params: {user_id: user.id}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
-                  = user.nickname
+              = link_to users_relationships_path(params: {user_id: user.id, room_id: @room.present? ? @room.id : nil}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+                = user.nickname
 
           // 自分をフォローしている　＆　自分がフォローしていない人を出す
           - unless @word.present?
             %p友達かも？
             - @users_follower.each do |user|
               - unless current_user.following?(user)
-                = link_to users_relationships_path(params: {user_id: user.id}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+                = link_to users_relationships_path(params: {user_id: user.id ,room_id: @room.present? ? @room.id : nil}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
                   = user.nickname
 
     // メイン画面
