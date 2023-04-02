@@ -4,22 +4,21 @@ class Public::UsersController < ApplicationController
     # app/channels/application_cable/connection.rb でこのクッキーを呼び出しています
     cookies.signed[:user_id] = current_user.id
 
+
     @users = current_user.following_users
     @rooms = current_user.rooms
     @users_follower = current_user.follower_user
 
     # 何かしらのユーザーの検索を行った時
-    word = params[:word]
-    unless word.nil? || word.blank?
+    @word = params[:word]
+    unless @word.nil? || @word.blank?
       range = params[:range]
       # 検索記述省略のため記述内容変更を行った
       @users = User.where.not(id: current_user.id).where.not(id: current_user.following_users.pluck(:id))
-      if range == "Name"
-        @users.where("name LIKE?", "%#{word}%") 
-      elsif range == "Nickname"
-        @users.where("nickname LIKE?", "%#{word}%")
+      if range == "Nickname"
+        @users = @users.where("nickname LIKE?", "%#{@word}%")
       else
-        @users.where("search_id LIKE?", "%#{word}%")
+        @users = @users.where("search_id LIKE?", "#{@word}")
       end
     end
 

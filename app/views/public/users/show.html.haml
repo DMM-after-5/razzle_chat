@@ -71,12 +71,20 @@
 
           // フレンド検索フォーム
           = form_with url: root_path, method: :get do |f|
-            = f.select :range, options_for_select( { '名前' => 'Name', 'ニックネーム' => 'Nickname', 'ID' => 'ID'  }, 'Name')
+            %label
+              = f.radio_button :range, 'Nickname', checked: "checked"
+              = "ニックネーム"
+            %label
+              = f.radio_button :range, 'ID'
+              = "ID"
             .input-group
               = f.search_field :word, class: 'form-control'
               %span.input-group-btn.input-group-append
                 = f.submit "検索", id: "user_list", class: 'btn btn-primary'
           = link_to "リセット", root_path, method: :get
+
+          - if @word.present?
+            %p 検索結果
 
           - @users.each do |user|
             // %span.list-group-item
@@ -89,11 +97,12 @@
                 = user.nickname
 
           // 自分をフォローしている　＆　自分がフォローしていない人を出す
-          %p友達かも？
-          - @users_follower.each do |user|
-            - unless current_user.following?(user)
-              = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
-                = user.nickname
+          - unless @word.present?
+            %p友達かも？
+            - @users_follower.each do |user|
+              - unless current_user.following?(user)
+                = link_to users_relationships_path(params: {user_id: user.id}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+                  = user.nickname
 
     // メイン画面
     .col.border-left
@@ -139,7 +148,7 @@
                   = f.text_field :search_id, class: "form-control", placeholder: "検索用ID"
                 .mt-3.text-right
                   = f.submit "更新", class: "btn btn-success btn-info"
-                  
+
 
 
       // ルーム選択時
