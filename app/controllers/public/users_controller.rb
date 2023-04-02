@@ -7,7 +7,7 @@ class Public::UsersController < ApplicationController
     # app/channels/application_cable/connection.rb でこのクッキーを呼び出しています
     cookies.signed[:user_id] = current_user.id
 
-    # フレンド一覧
+    # フレンド一覧 兼 検索結果一覧
     @users = current_user.following_users
     # ルーム一覧
     @rooms = current_user.rooms
@@ -17,17 +17,15 @@ class Public::UsersController < ApplicationController
     @mutual_follows = @users & @users_follower
 
     # 何かしらのユーザーの検索を行った時
-    word = params[:word]
-    unless word.nil? || word.blank?
+    @word = params[:word]
+    unless @word.nil? || @word.blank?
       range = params[:range]
       # 検索記述省略のため記述内容変更を行った
       @users = User.where.not(id: current_user.id).where.not(id: current_user.following_users.pluck(:id))
-      if range == "Name"
-        @users.where("name LIKE?", "%#{word}%") 
-      elsif range == "Nickname"
-        @users.where("nickname LIKE?", "%#{word}%")
+      if range == "Nickname"
+        @users = @users.where("nickname LIKE?", "%#{@word}%")
       else
-        @users.where("search_id LIKE?", "%#{word}%")
+        @users = @users.where("search_id LIKE?", "#{@word}")
       end
     end
 
