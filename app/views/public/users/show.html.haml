@@ -72,24 +72,28 @@
           // フレンド検索フォーム
           = form_with url: root_path, method: :get do |f|
             = f.select :range, options_for_select( { '名前' => 'Name', 'ニックネーム' => 'Nickname', 'ID' => 'ID'  }, 'Name')
-            = f.search_field :word
-            = f.submit "検索", id: "user_list"
+            .input-group
+              = f.search_field :word, class: 'form-control'
+              %span.input-group-btn.input-group-append
+                = f.submit "検索", id: "user_list", class: 'btn btn-primary'
           = link_to "リセット", root_path, method: :get
 
           - @users.each do |user|
-            %span.list-group-item
-              = user.nickname
-              - if current_user.following?(user)
-                = link_to "フォローを外す", users_relationships_path(params: {user_id: user.id}), method: :delete
-              - else
-                = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
+            // %span.list-group-item
+            // = user.nickname
+            - if current_user.following?(user)
+              = link_to users_relationships_path(params: {user_id: user.id}), method: :delete, data: {confirm: "フォローを外しますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+                = user.nickname
+            - else
+              = link_to users_relationships_path(params: {user_id: user.id}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+                = user.nickname
 
           // 自分をフォローしている　＆　自分がフォローしていない人を出す
           %p友達かも？
           - @users_follower.each do |user|
             - unless current_user.following?(user)
-              = user.nickname
-              = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post
+              = link_to "フォローする", users_relationships_path(params: {user_id: user.id}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+                = user.nickname
 
     // メイン画面
     .col.border-left
@@ -133,8 +137,9 @@
                 .field.mt-3
                   = f.label :search_id, "検索用ID", class: "pl-2"
                   = f.text_field :search_id, class: "form-control", placeholder: "検索用ID"
-                .mt-3
-                  = f.submit "更新", class: "btn btn-success"
+                .mt-3.text-right
+                  = f.submit "更新", class: "btn btn-success btn-info"
+                  
 
 
       // ルーム選択時
@@ -197,7 +202,7 @@
                           = check_box_tag "user_ids[]", user.id
                           = user.nickname
                         - count += 1
-                  .modal-footer.mt-3
+                  .text-right.mt-3
                     - if count == 0
                       = "招待を送れるユーザーがいません"
                     - else
@@ -220,9 +225,10 @@
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
           #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 185px);")
-            - @messages.each do |message|
-              = render "public/messages/message", message: message
-            = paginate @messages
+            .read_in
+              - @messages.each do |message|
+                = render "public/messages/message", message: message
+              = paginate @messages
 
           // 投稿フォーム
           .row
@@ -278,7 +284,7 @@
 :javascript
   $(document).on('turbolinks:load', function() {
     $('.jscroll').jscroll({ // 追加したdivのclass名と合わせる
-      contentSelector: '.jscroll',
+      contentSelector: '.read_in',
       nextSelector: '.next a',  // 次ページリンクのセレクタ
       loadingHtml: '読み込み中',
       padding: 10,
