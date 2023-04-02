@@ -20,12 +20,14 @@ class Public::UsersController < ApplicationController
     word = params[:word]
     unless word.nil? || word.blank?
       range = params[:range]
+      # 検索記述省略のため記述内容変更を行った
+      @users = User.where.not(id: current_user.id).where.not(id: current_user.following_users.pluck(:id))
       if range == "Name"
-        @users = User.where.not(id: current_user.id).where("name LIKE?", "%#{word}%")
+        @users.where("name LIKE?", "%#{word}%") 
       elsif range == "Nickname"
-        @users = User.where.not(id: current_user.id).where("nickname LIKE?", "%#{word}%")
+        @users.where("nickname LIKE?", "%#{word}%")
       else
-        @users = User.where.not(id: current_user.id).where("search_id LIKE?", "%#{word}%")
+        @users.where("search_id LIKE?", "%#{word}%")
       end
     end
 
