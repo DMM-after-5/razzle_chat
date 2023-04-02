@@ -1,6 +1,6 @@
-.row
+.row.test1
   - user = message.user
-  - if user == current_user
+  - if user.nickname == current_user.nickname
     .col
     .col.text-right
       %small
