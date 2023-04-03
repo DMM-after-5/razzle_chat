@@ -1,3 +1,12 @@
+- if index == 0
+  .text-center.mt-4.mb-2
+    = message.created_at.strftime('%Y年%m月%d日')
+    
+- if index > 0 && message.created_at.to_date != @messages[index - 1].created_at.to_date
+  // 前のレコードと作成日が同じ場合
+  .text-center.mt-4.mb-2
+    = message.created_at.strftime('%Y年%m月%d日')
+    
 .row.test1
   - user = message.user
   - if user.nickname == current_user.nickname
@@ -5,14 +14,14 @@
     .col.text-right
       %small
         = user.nickname
-        = message.created_at.strftime('%Y/%m/%d %H:%M')
+        = message.created_at.strftime('%m/%d %H:%M')
       .bg-info.rounded.m-1.p-1
         = simple_format(message.message)
   - else
     .col
       %small
         = user.nickname
-        = message.created_at.strftime('%Y/%m/%d %H:%M')
+        = message.created_at.strftime('%m/%d %H:%M')
       .bg-secondary.rounded.m-1.p-1
         = simple_format(message.message)
     .col

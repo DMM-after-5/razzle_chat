@@ -1,0 +1,46 @@
+.tab-pane.fade.show.active.list-group(id="rooms" role="tabpanel" aria-labelledby="rooms-tab")
+
+  // ルーム作成ボタン
+  .text-center
+    .btn.btn-sm.btn-success.my-1{"data-target" => "#modalRoomNew", "data-toggle" => "modal", type: "button" }
+      ルームを作成する<i class="fas fa-plus"></i>
+
+  // モーダルでルーム作成フォームを表示する記述
+  #modalRoomNew.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomNewTitle", role: "dialog", tabindex: "-1"}
+    .modal-dialog{role: "document"}
+      .modal-content
+        .modal-header
+          %h5#modalRoomNewTitle.modal-title ルーム作成<i class="fas fa-plus"></i>
+          %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+            %span{"aria-hidden" => "true"} ×
+        .modal-body.text-left(style="word-wrap: break-word;")
+          // モーダルの中身
+          = render "public/rooms/room_form", room: Room.new, submit_text: "ルーム作成"
+
+  - @rooms.each do |room|
+    -# %p{"data-tablinks" => "off"}
+    - if room == @room
+      // 選択しているルーム
+      = link_to root_path, data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center active" do
+        = room.name
+        - if room.entried?(current_user)
+          %span.badge.badge-secondary.badge-pill= room.messages.count
+        - else
+          %span.badge.badge-danger.badge-pill 未参加
+    - else
+      // 未選択のルーム
+      - if room.entried?(current_user)
+        // 参加しているルーム
+        - if room.owner_id == current_user.id
+          = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+            = room.name
+            %span.badge.badge-primary.badge-pill= room.messages.count
+        - else
+          = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item d-flex justify-content-between align-items-center list-group-item-action" do
+            = room.name
+            %span.badge.badge-primary.badge-pill= room.messages.count
+      - else
+        // 未参加のルーム
+        = link_to root_path(room_id: room.id), data: { 'turbolinks': false }, class: "list-group-item list-group-item-warning d-flex justify-content-between align-items-center list-group-item-action" do
+          = room.name
+          %span.badge.badge-danger.badge-pill 未参加

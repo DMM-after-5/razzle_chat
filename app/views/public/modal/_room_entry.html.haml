@@ -1,0 +1,25 @@
+#modalRoomEntry.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEntryTitle", role: "dialog", tabindex: "-1"}
+  .modal-dialog{role: "document"}
+    .modal-content
+      .modal-header
+        %h5#modalRoomEntryTitle.modal-title フレンド招待<i class="fas fa-plus"></i>
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+          %span{"aria-hidden" => "true"} ×
+      .modal-body.text-left(style="word-wrap: break-word;")
+        %small
+          招待したいフレンドにチェックして送信ボタンを押してください。
+        = form_with model: Entry.new, url: create_all_path, method: :post do |f|
+          - count = 0
+          .list-group
+            - @mutual_follows.each do |user|
+              - unless @room.users.any?{|room_user| room_user == user}
+                = f.hidden_field :room_id, :value => @room.id
+                .list-group-item
+                  = check_box_tag "user_ids[]", user.id
+                  = user.nickname
+                - count += 1
+          .text-right.mt-3
+            - if count == 0
+              = "招待を送れるユーザーがいません"
+            - else
+              = submit_tag "送信", class: "btn btn-info"
