@@ -1,0 +1,31 @@
+#modalUserEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalUserEditTitle", role: "dialog", tabindex: "-1"}
+  .modal-dialog{role: "document"}
+    .modal-content
+      .modal-header
+        %h5#modalUserEditTitle.modal-title ユーザー情報編集<i class="fas fa-plus"></i>
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+          %span{"aria-hisdden" => "true"} ×
+      .modal-body.text-left(style="word-wrap: break-word;")
+        // モーダルの中身
+        = form_with model: current_user, url: users_path, method: :patch do |f|
+          .field.mt-3
+            = f.label :name, "名前", class: "pl-2"
+            = f.text_field :name, class: "form-control", id: "validationTextarea", placeholder: "お名前", required: true
+            .invalid-feedback お名前を入力してください。
+          .field.mt-3
+            = f.label :nickname, "ニックネーム", class: "pl-2"
+            = f.text_field :nickname, class: "form-control", id: "validationTextarea", placeholder: "ニックネーム", required: true
+            .invalid-feedback ニックネームを入力してください。
+          .field.mt-3
+            = f.label :phone_number, "電話番号", class: "pl-2"
+            = f.number_field :phone_number, class: "form-control", id: "validationTextarea", placeholder: "電話番号", required: true
+            .invalid-feedback 電話番号を入力してください。
+          .field.mt-3
+            = f.label :email, "メールアドレス", class: "pl-2"
+            = f.email_field :email, autofocus: true, class: "form-control", id: "validationTextarea", placeholder: "メールアドレス", required: true
+            .invalid-feedback メールアドレスを入力してください。
+          .field.mt-3
+            = f.label :search_id, "検索用ID", class: "pl-2"
+            = f.text_field :search_id, class: "form-control", placeholder: "検索用ID"
+          .mt-3.text-right
+            = f.submit "更新", class: "btn btn-success btn-info"

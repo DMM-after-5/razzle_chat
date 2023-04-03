@@ -61,6 +61,8 @@ document.addEventListener('turbolinks:load', () => {
           </div>
           </div>`
           )
+          // 最後のメッセージまでスクロール
+          element.scrollTop = element.scrollHeight - element.clientHeight;
         } else {
           element.insertAdjacentHTML('beforeend',
           `<div class="row">
@@ -76,6 +78,7 @@ document.addEventListener('turbolinks:load', () => {
           <div class="col"></div>
           </div>`
           )
+          element.scrollTop = element.scrollHeight - element.clientHeight;
         }
       },
 

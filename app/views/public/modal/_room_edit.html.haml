@@ -1,0 +1,10 @@
+#modalRoomEdit.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomEditTitle", role: "dialog", tabindex: "-1"}
+  .modal-dialog{role: "document"}
+    .modal-content
+      .modal-header
+        %h5#modalRoomEditTitle.modal-title ルーム編集<i class="fas fa-edit"></i>
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+          %span{"aria-hidden" => "true"} ×
+      .modal-body.text-left(style="word-wrap: break-word;")
+        // モーダルの中身
+        = render "public/rooms/room_form", room: @room, submit_text: "変更を保存"

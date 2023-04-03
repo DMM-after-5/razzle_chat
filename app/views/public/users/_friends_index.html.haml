@@ -1,0 +1,38 @@
+.tab-pane.fade.list-group(id="friends" role="tabpanel" aria-labelledby="friends-tab")
+
+  // フレンド検索フォーム
+  = form_with url: root_path, method: :get do |f|
+    - if @room.present?
+      = f.hidden_field :room_id, :value => @room.id
+    %label
+      = f.radio_button :range, 'Nickname', checked: "checked"
+      = "ニックネーム"
+    %label
+      = f.radio_button :range, 'ID'
+      = "ID"
+    .input-group
+      = f.search_field :word, class: 'form-control'
+      %span.input-group-btn.input-group-append
+        = f.submit "検索", id: "user_list", class: 'btn btn-primary'
+  = link_to "リセット", root_path, method: :get
+
+  - if @word.present?
+    %p 検索結果
+
+  - @users.each do |user|
+    // %span.list-group-item
+    // = user.nickname
+    - if current_user.following?(user)
+      = link_to users_relationships_path(params: {user_id: user.id}), method: :delete, data: {confirm: "フォローを外しますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+        = user.nickname
+    - else
+      = link_to users_relationships_path(params: {user_id: user.id, room_id: @room.present? ? @room.id : nil}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+        = user.nickname
+
+  // 自分をフォローしている　＆　自分がフォローしていない人を出す
+  - unless @word.present?
+    %p友達かも？
+    - @users_follower.each do |user|
+      - unless current_user.following?(user)
+        = link_to users_relationships_path(params: {user_id: user.id ,room_id: @room.present? ? @room.id : nil}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
+          = user.nickname
