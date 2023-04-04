@@ -28,6 +28,12 @@ class Public::UsersController < ApplicationController
         @users = @users.where("search_id LIKE?", "#{@word}")
       end
     end
+    
+    # 何かしらのメッセージの検索を行った時
+    @search_message = params[:message_search_word]
+    unless @search_message.nil? || @search_message.blank?
+      @search_messages = Message.where(room_id: params[:room_id]).includes(:user).where("message LIKE?", "%#{@search_message}%")
+    end
 
     # roomの切り替え処理
     if params[:room_id].present?
