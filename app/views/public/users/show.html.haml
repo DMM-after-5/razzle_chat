@@ -78,6 +78,10 @@
               %span.input-group-btn.input-group-append
                 = f.submit "メッセージ検索", class: 'btn btn-primary'
           
+          //検索結果が存在しない時
+          - if params[:message_search_word].present? && @search_messages.empty?
+            %p検索した単語に合致するメッセージはありませんでした
+            
           //検索結果の表示用のモーダルできれば検索時こっちが開くようにしたい
           - if @search_messages.present?
             .btn.btn-sm.btn-success.my-1{"data-target" => "#modalSearchMessage", "data-toggle" => "modal", type: "button" }
