@@ -68,7 +68,28 @@
         = render "public/modal/room_edit"
 
         // チャット画面
-        .container(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
+        .container.p-0(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
+        
+          //ルーム内でのメッセージの検索
+          = form_with url: root_path, method: :get do |f|
+            .input-group.mb-3
+              = f.hidden_field :room_id, :value => @room.id
+              = f.search_field :message_search_word, class: 'form-control'
+              %span.input-group-btn.input-group-append
+                = f.submit "メッセージ検索", class: 'btn btn-primary'
+          
+          //検索結果が存在しない時
+          - if params[:message_search_word].present? && @search_messages.empty?
+            %p検索した単語に合致するメッセージはありませんでした
+            
+          //検索結果の表示用のモーダルできれば検索時こっちが開くようにしたい
+          - if @search_messages.present?
+            .btn.btn-sm.btn-success.my-1{"data-target" => "#modalSearchMessage", "data-toggle" => "modal", type: "button" }
+              メッセージ検索結果
+              
+            //メッセージを表示するモーダル
+            = render "public/modal/search_message"
+              
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
           #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 185px);")
@@ -147,4 +168,14 @@
   $(document).on('turbolinks:load', function() {
     let element = document.getElementById('messages')
     element.scrollTop = element.scrollHeight - element.clientHeight;
+  });
+  
+// 検索結果クリックで指定場所へスクロール(試作中)
+:javascript
+  $(function() {
+    $('').click(function() {
+      let id = document.getElementById('3')
+      let element = document.getElementById('messages')
+      element.scrollTop = id.offsetTop;
+    });
   });
