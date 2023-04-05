@@ -11,6 +11,10 @@ class Public::UsersController < ApplicationController
     @users = current_user.following_users
     # ルーム一覧
     @rooms = current_user.rooms
+    
+    # メッセージ投稿された順にルームを並び替える
+    # @rooms = current_user.rooms.sort_by { |room| room.messages&.last&.created_at }.reverse
+    
     # 自分をフォローしている人
     @users_follower = current_user.follower_user
     # 相互フォローの人
