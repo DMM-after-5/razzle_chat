@@ -25,6 +25,9 @@
     - if current_user.following?(user)
       = link_to users_relationships_path(params: {user_id: user.id}), method: :delete, data: {confirm: "フォローを外しますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
         = user.nickname
+        - if current_user.followering?(user)
+          <i class="fas fa-handshake"></i>
+          
     - else
       = link_to users_relationships_path(params: {user_id: user.id, room_id: @room.present? ? @room.id : nil}), method: :post, data: {confirm: "フォローしますか？"}, class: "list-group-item list-group-item-info d-flex justify-content-between align-items-center list-group-item-action" do
         = user.nickname
