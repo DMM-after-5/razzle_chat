@@ -1,0 +1,19 @@
+#modalRoomUsers.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "modalRoomUsersTitle", role: "dialog", tabindex: "-1"}
+  .modal-dialog{role: "document"}
+    .modal-content
+      .modal-header
+        %h5#modalRoomUsersTitle.modal-title 参加者一覧<i class="fas fa-users"></i>
+        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+          %span{"aria-hidden" => "true"} ×
+      .modal-body.text-left(style="word-wrap: break-word;")
+        // モーダルの中身
+        .list-group
+          - @room.users.each do |user|
+            .list-group-item
+              - if @room.entried?(user)
+                - if user.id == @room.owner_id
+                  = user.nickname + " (オーナー)"
+                - else
+                  = user.nickname
+              - else
+                = user.nickname + " (招待中)"
