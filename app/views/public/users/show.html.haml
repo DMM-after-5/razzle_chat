@@ -84,7 +84,7 @@
             
           //検索結果の表示用のモーダルできれば検索時こっちが開くようにしたい
           - if @search_messages.present?
-            .btn.btn-sm.btn-success.my-1{"data-target" => "#modalSearchMessage", "data-toggle" => "modal", type: "button" }
+            .search_btn.d-none.btn.btn-sm.btn-success.my-1{"data-target" => "#modalSearchMessage", "data-toggle" => "modal", type: "button" }
               メッセージ検索結果
               
             //メッセージを表示するモーダル
@@ -170,12 +170,29 @@
     element.scrollTop = element.scrollHeight - element.clientHeight;
   });
   
+// メッセージの検索結果がある場合、検索結果のモーダルを展開する
+:javascript
+  $(document).on('turbolinks:load', function() {
+    const btn = document.querySelector('.search_btn')
+    if (btn) {
+      btn.click();
+      history.replaceState('', '', '/?room_id=#{@room.id}');
+    }
+  });
 // 検索結果クリックで指定場所へスクロール(試作中)
 :javascript
-  $(function() {
-    $('').click(function() {
-      let id = document.getElementById('3')
+  document.querySelectorAll('.search_result_messages').forEach(function(el) {
+    el.addEventListener('click', function() {
+      var message_id = this.className.match(/message_(\d+)/)[1];
+      console.log(message_id); // メッセージIDをコンソールに出力
+      let id = document.getElementById(`message_${message_id}`)
+      console.log(id)
       let element = document.getElementById('messages')
-      element.scrollTop = id.offsetTop;
+      console.log(element)
+      console.log(id.offsetTop)
+      console.log(element.offsetTop)
+      element.scrollTop = id.offsetTop - element.offsetTop;
+      const closeBtn = document.querySelector('.close_btn')
+      closeBtn.click();
     });
   });

@@ -3,13 +3,13 @@
     .modal-content
       .modal-header
         %h5#modalSearchMessageTitle.modal-title メッセージ検索結果
-        %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
+        %button.close.close_btn{"aria-label" => "Close", "data-dismiss" => "modal", type: "button"}
           %span{"aria-hisdden" => "true"} ×
       .modal-body.text-left(style="word-wrap: break-word;")
         // モーダルの中身
         .col
         - @search_messages.each do |search_message|
-          .message.mb-3.border-bottom
+          .search_result_messages.message.mb-3.border-bottom{class: "message_#{search_message.id}"}
             .d-flex.justify-content-between
               .user_name
                 = search_message.user.nickname
@@ -17,5 +17,4 @@
                 = search_message.created_at.strftime('%Y/%m/%d')
             .col
               = search_message.message.gsub(params[:message_search_word], "<span class='highlight'>#{params[:message_search_word]}</span>").html_safe
-              
               

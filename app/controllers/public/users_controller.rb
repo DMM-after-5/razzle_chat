@@ -10,11 +10,20 @@ class Public::UsersController < ApplicationController
     # フレンド一覧 兼 検索結果一覧
     @users = current_user.following_users
     # ルーム一覧
-    @rooms = current_user.rooms
+    # @rooms = current_user.rooms
     
     # メッセージ投稿された順にルームを並び替える
-    # @rooms = current_user.rooms.sort_by { |room| room.messages&.last&.created_at }.reverse
+    # メッセージが無いroomを抽出する
+    no_message_rooms = current_user.rooms.includes(:messages).select { |room| room.messages.empty? }
     
+    # メッセージが有るルームを抽出し、メッセージが最後に投稿された順で並び替える
+    rooms = current_user.rooms.includes(:messages).select { |room| room.messages.present? }
+                        .sort_by { |room| room.messages.last&.created_at }
+                        .reverse
+                        
+    # メッセージが投稿された順の後にメッセージの無いルームが来る配列を作成する
+    @rooms = rooms + no_message_rooms
+
     # 自分をフォローしている人
     @users_follower = current_user.follower_user
     # 相互フォローの人
