@@ -11,6 +11,10 @@ class Public::UsersController < ApplicationController
     @users = current_user.following_users
     # ルーム一覧
     @rooms = current_user.rooms
+    
+    # メッセージ投稿された順にルームを並び替える
+    # @rooms = current_user.rooms.sort_by { |room| room.messages&.last&.created_at }.reverse
+    
     # 自分をフォローしている人
     @users_follower = current_user.follower_user
     # 相互フォローの人
@@ -27,6 +31,12 @@ class Public::UsersController < ApplicationController
       else
         @users = @users.where("search_id LIKE?", "#{@word}")
       end
+    end
+    
+    # 何かしらのメッセージの検索を行った時
+    @search_message = params[:message_search_word]
+    unless @search_message.nil? || @search_message.blank?
+      @search_messages = Message.where(room_id: params[:room_id]).includes(:user).where("message LIKE?", "%#{@search_message}%")
     end
 
     # roomの切り替え処理

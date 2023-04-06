@@ -11,6 +11,11 @@ class Public::RoomsController < ApplicationController
       entry.room_id = room.id
       entry.entry_status = true
       entry.save
+      # 新規立ち上げのメッセージの作成
+      # message = current_user.messages.new
+      # message.message = "新しくルームを作成しました"
+      # message.room_id = room.id
+      # message.save
       redirect_to root_path
     else
       render root_path

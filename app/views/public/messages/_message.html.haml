@@ -11,14 +11,14 @@
   - user = message.user
   - if user.nickname == current_user.nickname
     .col
-    .col.text-right
+    .col.text-right{id: "message_#{message.id}"}
       %small
         = user.nickname
         = message.created_at.strftime('%m/%d %H:%M')
       .bg-info.rounded.m-1.p-1
         = simple_format(message.message)
   - else
-    .col
+    .col{id: "message_#{message.id}"}
       %small
         = user.nickname
         = message.created_at.strftime('%m/%d %H:%M')

@@ -50,7 +50,7 @@ document.addEventListener('turbolinks:load', () => {
           element.insertAdjacentHTML('beforeend',
           `<div class="row">
           <div class="col"></div>
-          <div class="col text-right">
+          <div class="col text-right" id="message_${data['id']}">
           <small>
           ${data['user_name']}
           ${data['created_at']}
