@@ -22,3 +22,15 @@ nav.pagination {
   color: red;
   background-color: antiquewhite;
 }
+
+.search_result_messages {
+  cursor: pointer;
+}
+
+.search_result_messages:hover {
+  background-color: beige;
+}
+
+.active .rounded {
+  background-color: gold !important;
+}
