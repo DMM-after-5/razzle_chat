@@ -42,7 +42,7 @@
       
       // ルーム選択時
       - if @room.present?
-        %h1
+        %h1.room{ data: { room_id: @room.id } }
           = @room.name
           .d-flex
             // フレンド招待ボタン
@@ -174,11 +174,13 @@
 :javascript
   $(document).on('turbolinks:load', function() {
     const btn = document.querySelector('.search_btn')
-    if (btn) {
+    const roomId = document.querySelector('.room').dataset.roomId;
+    if (btn && roomId) {
       btn.click();
-      history.replaceState('', '', '/?room_id=#{@room.id}');
+      history.replaceState('', '', `/?room_id=${roomId}`);
     }
   });
+  
 // 検索結果クリックで指定場所へスクロール(試作中)
 :javascript
   document.querySelectorAll('.search_result_messages').forEach(function(el) {
@@ -186,6 +188,7 @@
       var message_id = this.className.match(/message_(\d+)/)[1];
       console.log(message_id); // メッセージIDをコンソールに出力
       let id = document.getElementById(`message_${message_id}`)
+      id.classList.add("active");
       console.log(id)
       let element = document.getElementById('messages')
       console.log(element)
