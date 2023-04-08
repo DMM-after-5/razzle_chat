@@ -20,10 +20,10 @@
 
         // ルーム一覧
         = render "public/users/room_index"
-        
+
         // フレンド一覧
         = render "public/users/friends_index"
-        
+
     // メイン画面
     .col.border-left
       // 画面右上にプルダウンメニューを表示
@@ -39,7 +39,7 @@
 
       // モーダルでユーザー編集画面を表示する記述
       = render "public/modal/user_edit"
-      
+
       // ルーム選択時
       - if @room.present?
         %h1.room{ data: { room_id: @room.id } }
@@ -60,7 +60,7 @@
 
         // モーダルで参加者一覧画面を表示する記述
         = render "public/modal/room_users"
-        
+
         // モーダルでフレンド招待画面を表示する記述
         = render "public/modal/room_entry"
 
@@ -69,7 +69,7 @@
 
         // チャット画面
         .container.p-0(id="data" data-chatroom-id="#{@room.id}" data-user-id="#{current_user.id}")
-        
+
           //ルーム内でのメッセージの検索
           = form_with url: root_path, method: :get do |f|
             .input-group.mb-3
@@ -77,22 +77,22 @@
               = f.search_field :message_search_word, class: 'form-control'
               %span.input-group-btn.input-group-append
                 = f.submit "メッセージ検索", class: 'btn btn-primary'
-          
+
           //検索結果が存在しない時
           - if params[:message_search_word].present? && @search_messages.empty?
             %p検索した単語に合致するメッセージはありませんでした
-            
+
           //検索結果の表示用のモーダルできれば検索時こっちが開くようにしたい
           - if @search_messages.present?
             .search_btn.d-none.btn.btn-sm.btn-success.my-1{"data-target" => "#modalSearchMessage", "data-toggle" => "modal", type: "button" }
               メッセージ検索結果
-              
+
             //メッセージを表示するモーダル
             = render "public/modal/search_message"
-              
+
           // メッセージ一覧（部分テンプレート化済み）
           // Websocketを介してサーバーからデータを受信した時に #messages に挿入されます
-          #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 185px);")
+          #messages.scroll-list.jscroll(style="overflow-y: scroll; overflow-x: hidden; max-height: calc(100vh - 30vh);")
             .read_in
               // - @messages.each do |message|
               - @messages.each_with_index do |message, index|
@@ -169,7 +169,7 @@
     let element = document.getElementById('messages')
     element.scrollTop = element.scrollHeight - element.clientHeight;
   });
-  
+
 // メッセージの検索結果がある場合、検索結果のモーダルを展開する
 :javascript
   $(document).on('turbolinks:load', function() {
@@ -180,7 +180,7 @@
       history.replaceState('', '', `/?room_id=${roomId}`);
     }
   });
-  
+
 // 検索結果クリックで指定場所へスクロール(試作中)
 :javascript
   document.querySelectorAll('.search_result_messages').forEach(function(el) {
