@@ -16,7 +16,7 @@ class Public::RoomsController < ApplicationController
       # message.message = "新しくルームを作成しました"
       # message.room_id = room.id
       # message.save
-      redirect_to root_path
+      redirect_to root_path(room_id: params[:room_id])
     else
       render root_path
     end
@@ -25,9 +25,9 @@ class Public::RoomsController < ApplicationController
   def update
     room = Room.find(params[:id])
     if room.update(room_params)
-      redirect_to root_path
+      redirect_to root_path(room_id: room.id)
     else
-      render root_path
+      render root_path(room_id: room.id)
     end
   end
 
